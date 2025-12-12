@@ -8,11 +8,12 @@ Sistema integral desarrollado para la Subdirección de Modelamiento Numérico (S
 
 ### Objetivos del Sistema
 
-- **Visualización de cambios climáticos**: Proyecciones espaciales de anomalías (futuro vs histórico) en temperatura y precipitación bajo escenarios SSP245 y SSP585
-- **Análisis de consenso científico**: Generación de ensambles multimodelo para reducir incertidumbre individual
-- **Evaluación estadística**: Análisis de robustez mediante pruebas de significancia (p < 0.05)
-- **Time of Emergence (TOE)**: Identificación del año en que la señal climática emerge sobre la variabilidad natural
-- **Análisis subnacional**: Desglose de información a nivel departamental
+Proporcionar una interfaz intuitiva para explorar:
+- **Escala Subnacional:** Desglose de información (series temporales y estadísticas) a nivel departamental.
+- **Proyecciones de Cambio Climático:** Visualización espacial de anomalías (Futuro - Histórico) en temperatura y precipitación bajo escenarios SSP245 y SSP585.
+- **Multimodel:** Generación de ensambles multimodelo para reducir la incertidumbre individual de los modelos globales.
+- **Análisis Estadístico:** Análisis de cambios mediante pruebas estadisticas (T-Student) de significancia (p < 0.05)
+- **Time of Emergence (TOE):** Identificación del año exacto en que la señal de cambio climático emerge permanentemente sobre la variabilidad natural del clima.
 
 ### Navegación y Vistas
 
@@ -26,7 +27,7 @@ Visualización de consenso científico con tres componentes:
 - Mapa de Time of Emergence (TOE)
 
 #### Vista 3: Cambios por Modelo Individual
-Comparación de proyecciones entre modelos específicos, con análisis de incertidumbre intermodelo.
+Comparación de proyecciones entre modelos específicos, con análisis de significancia de cambios por modelo.
 
 #### Vista 4: Series Temporales por Departamento
 Análisis temporal a escala subnacional que incluye:
@@ -112,7 +113,7 @@ Cálculo de Time of Emergence:
 - `estadisticas_series.py`: Cálculo de métricas comparativas
 
 #### Categoría: Generación de Visualizaciones
-- `graficos_cambios.py`: Mapas de cambios (Matplotlib + Cartopy)
+- `graficos_cambios.py`: Mapas de cambios (Matplotlib + Geopandas)
 - `graficos_promedio.py`: 3-map layout para ensambles (Plotly)
 - `graficos_series.py`: Series temporales (Plotly)
 - `mapa_interactivo.py`: Mapas departamentales interactivos

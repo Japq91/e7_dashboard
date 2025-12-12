@@ -22,6 +22,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.egg-info/
+.ipynb_checkpoints/
 dist/
 build/
 
