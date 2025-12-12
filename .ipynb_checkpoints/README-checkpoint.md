@@ -65,59 +65,56 @@ Proporcionar una interfaz intuitiva para explorar:
 
 ## 🔧 Parte 2: Para el Desarrollador/Analista
 
-### 🏗️ Arquitectura del Sistema
+## 🏗️ Arquitectura del Flujo de Procesamiento
+
+Este diagrama ilustra el flujo de datos y procesamiento, dividido en las cuatro capas principales de la aplicación.
 
 ```mermaid
-graph TB
-    %% ===== CAPA DE DATOS =====
-    subgraph A[CAPA DE DATOS]
-        A1[Modelos Climáticos NetCDF] --> A2[Archivos Geoespaciales]
+graph TD
+    %% Estilos para simplificar la visualización en el README
+    classDef layer style fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
+    classDef data style fill:#def,stroke:#333,stroke-width:2px,color:#000;
+    classDef proc style fill:#dff,stroke:#333,stroke-width:2px,color:#000;
+    classDef viz style fill:#ffd,stroke:#333,stroke-width:2px,color:#000;
+    classDef aux style fill:#eee,stroke:#999,stroke-width:1px,color:#333;
+
+    %% ===== CAPA DE DATOS (Input) =====
+    subgraph A[1. CAPA DE DATOS (INPUT)]
+        A1[Modelos Climáticos NetCDF y Geospatiales]:::data
     end
     
-    %% ===== CAPA DE PROCESAMIENTO =====
-    subgraph B[CAPA DE PROCESAMIENTO]
-        B1[01_preproc_01_dep.py] --> B2[CSV por Departamento]
-        B3[01_preproc_02_cambio.py] --> B4[Cambios y Significancia]
-        B5[01_preproc_03_ens_cdo.py] --> B6[Ensambles Multimodelo]
-        B7[01_preproc_04_toe.py] --> B8[Time of Emergence]
+    %% ===== CAPA DE PROCESAMIENTO (Scripts) =====
+    subgraph B[2. CAPA DE PROCESAMIENTO]
+        B1[Scripts de Preprocesamiento (01_preproc_*.py)]:::proc
+        B2[Resultados Procesados (CSV, Cambios, Ensambles, TOEs)]:::data
     end
     
-    %% ===== CAPA DE VISUALIZACIÓN =====
-    subgraph C[CAPA DE VISUALIZACIÓN]
-        C1[00_dashboard.py] --> C2[Interfaz Streamlit]
-        C2 --> C3[Mapas de Cambios]
-        C2 --> C4[Gráficos de Series]
-        C2 --> C5[Mapas de Promedio]
+    %% ===== CAPA DE VISUALIZACIÓN (Output) =====
+    subgraph C[3. CAPA DE VISUALIZACIÓN (DASHBOARD)]
+        C1[00_dashboard.py (Streamlit)]:::viz
+        C2[Mapas y Gráficos Interactivos]:::viz
     end
     
-    %% ===== CAPA DE MÓDULOS AUXILIARES =====
-    subgraph D[CAPA DE MÓDULOS AUXILIARES]
-        D1[src/dashboard_utils.py] --> D2[Funciones Utilitarias]
-        D3[src/data_loader_*.py] --> D4[Carga de Datos]
-        D5[src/graficos_*.py] --> D6[Generación de Visualizaciones]
-        D7[src/aux_*.py] --> D8[Algoritmos Científicos]
+    %% ===== CAPA DE MÓDULOS AUXILIARES (Soporte) =====
+    subgraph D[4. MÓDULOS AUXILIARES (src/*)]
+        D1[Lógica de Utilidades, Carga de Datos y Algoritmos Científicos]:::aux
     end
     
-    %% ===== CONEXIONES ENTRE CAPAS =====
-    A --> B
-    B --> C
-    D --> B
-    D --> C
-    
-    %% ===== FLUJOS DE DATOS PRINCIPALES =====
+    %% ===== FLUJO PRINCIPAL DE DATOS =====
     A1 --> B1
-    A1 --> B3
-    A1 --> B5
-    A1 --> B7
+    B1 --> B2
+    B2 --> C1
+    C1 --> C2
     
-    B2 --> C4
-    B4 --> C3
-    B6 --> C5
-    B8 --> C5
+    %% ===== CONEXIONES DE SOPORTE =====
+    D1 -.-> B1
+    D1 -.-> C1
     
-    D8 --> B4
-    D8 --> B8
-```
+    %% Indicadores de las capas para el README
+    A[CAPA DE DATOS]:::layer
+    B[CAPA DE PROCESAMIENTO]:::layer
+    C[CAPA DE VISUALIZACIÓN]:::layer
+    D[MÓDULOS AUXILIARES]:::layer
 
 ### 📁 Jerarquía de Archivos y Módulos
 
@@ -692,7 +689,7 @@ streamlit run 00_dashboard.py
 ### **Equipo Responsable**
 - **Locación SMN** - JAPQ
 - **Contacto**: [japaredesq@gmail.com]
-- **Repositorio**: [github]
+- **Repositorio**: [https://github.com/Japq91/e7_dashboard]
 
 ### **Actualización**
 1. **Semestral**: Revisión de algoritmos estadísticos

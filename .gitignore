@@ -1,3 +1,8 @@
+data/**
+!data/modelos_agre/
+!data/modelos_agre/.gitkeep
+!data/geo/
+!data/geo/.gitkeep
 # =========================
 # Datos pesados / binarios
 # =========================
