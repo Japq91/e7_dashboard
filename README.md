@@ -1,451 +1,208 @@
-# 🌍 Dashboard de Análisis Climático Multimodelo - SMN
+# Dashboard de Análisis Climático Multimodelo - SMN
 
-## 📋 Descripción General
+## Descripción General
 
-Este repositorio aloja el **Dashboard de Análisis Climático Multimodelo**, una herramienta integral desarrollada para la **Subdirección de Modelamiento Numérico (SMN)** del SENAMHI. El sistema permite visualizar, analizar y comparar proyecciones climáticas (CMIP6) para Perú, combinando un procesamiento científico robusto (backend batch) con visualizaciones interactivas en tiempo real (frontend Streamlit).
+Sistema integral desarrollado para la Subdirección de Modelamiento Numérico (SMN) del SENAMHI que permite visualizar, analizar y comparar proyecciones climáticas (CMIP6) para Perú. Combina procesamiento científico batch con visualizaciones interactivas en tiempo real mediante Streamlit.
 
----
+## Parte 1: Guía para Usuario Final
 
-## 🚀 Parte 1: Para el Usuario Final
+### Objetivos del Sistema
 
-### 🎯 Objetivos del Sistema
-Proporcionar una interfaz intuitiva para explorar:
-- **Proyecciones de Cambio Climático:** Visualización espacial de anomalías (Futuro - Histórico) en temperatura y precipitación bajo escenarios SSP245 y SSP585.
-- **Consenso Científico:** Generación de ensambles multimodelo para reducir la incertidumbre individual de los modelos globales.
-- **Análisis Estadístico:** Evaluación de la robustez de las señales mediante pruebas de significancia (T-Student).
-- **Time of Emergence (TOE):** Identificación del año exacto en que la señal de cambio climático emerge permanentemente sobre la variabilidad natural del clima.
-- **Escala Subnacional:** Desglose de información (series temporales y estadísticas) a nivel departamental para la toma de decisiones locales.
+- **Visualización de cambios climáticos**: Proyecciones espaciales de anomalías (futuro vs histórico) en temperatura y precipitación bajo escenarios SSP245 y SSP585
+- **Análisis de consenso científico**: Generación de ensambles multimodelo para reducir incertidumbre individual
+- **Evaluación estadística**: Análisis de robustez mediante pruebas de significancia (p < 0.05)
+- **Time of Emergence (TOE)**: Identificación del año en que la señal climática emerge sobre la variabilidad natural
+- **Análisis subnacional**: Desglose de información a nivel departamental
 
-### 🖥️ Navegación en el Dashboard
+### Navegación y Vistas
 
-#### 📊 Vistas Disponibles:
+#### Vista 1: Inicio General
+Pantalla de bienvenida con instrucciones básicas y descripción de funcionalidades.
 
-1. **INICIO GENERAL (🏠)**
-   - Punto de entrada con instrucciones detalladas
-   - Descripción de funcionalidades disponibles
-   - No requiere configuración previa
+#### Vista 2: Promedio (Ensemble Multimodelo)
+Visualización de consenso científico con tres componentes:
+- Mapa de cambios SSP245 (escenario moderado)
+- Mapa de cambios SSP585 (escenario severo)  
+- Mapa de Time of Emergence (TOE)
 
-2. **PROMEDIO (🌍)**
-   - **Objetivo**: Visualizar consenso multimodelo
-   - **Salidas**: 
-     - Mapa 1: Cambios SSP245 (escenario moderado)
-     - Mapa 2: Cambios SSP585 (escenario severo)
-     - Mapa 3: TOE (año de emergencia de la señal climática)
-   - **Beneficio**: Identificación rápida de zonas críticas con acuerdo multimodelo
+#### Vista 3: Cambios por Modelo Individual
+Comparación de proyecciones entre modelos específicos, con análisis de incertidumbre intermodelo.
 
-3. **CAMBIOS**
-   - **Objetivo**: Comparar proyecciones individuales de modelos
-   - **Configuración requerida**:
-     - Modelos (selección múltiple)
-     - Variable + Agregación temporal
-     - Periodo de referencia
-     - Año centro + Escenario
-   - **Beneficio**: Análisis detallado de incertidumbre intermodelo
+#### Vista 4: Series Temporales por Departamento
+Análisis temporal a escala subnacional que incluye:
+- Gráfico de series (modelos individuales + promedio)
+- Estadísticas comparativas entre períodos
+- Mapas de ubicación departamental
 
-4. **SERIES**
-   - **Objetivo**: Analizar evolución temporal por departamento
-   - **Componentes**:
-     - Gráfico de series temporales (modelos + promedio)
-     - Estadísticas comparativas periodos base/futuro
-     - Mapas de ubicación departamental
-   - **Beneficio**: Evaluación de impactos a escala subnacional
+### Controles de Interfaz
 
-### 🎮 Controles Principales
-
-| Control | Función | Valores Típicos |
-|---------|---------|-----------------|
-| **Modelos** | Selección de modelos climáticos | ecmwf-51, ncep-2, etc. |
-| **Variable y Agregación** | Variable climática + escala temporal | tasmin_ANUAL, pr_DEF, tasmax_MAM |
-| **Periodo base** | Línea de referencia climática | 1981-2010, 1991-2020 |
-| **Año centro y Escenario** | Periodo futuro + trayectoria socioeconómica | 2050_ssp585, 2030_ssp245 |
-| **Significancia** | Filtro estadístico (p < 0.05) | Activado/Desactivado |
-| **Departamento** | Unidad subnacional para series | Lima, Cusco, Loreto, etc. |
+| Control | Función | Valores |
+|---------|---------|---------|
+| Modelos | Selección de modelos climáticos | ecmwf-51, ncep-2, etc. |
+| Variable + Agregación | Variable climática y escala temporal | tasmin_ANUAL, pr_DEF, tasmax_MAM |
+| Periodo base | Referencia climática | 1981-2010, 1991-2020 |
+| Año centro + Escenario | Período futuro y trayectoria | 2050_ssp585, 2030_ssp245 |
+| Significancia | Filtro estadístico | Activado/Desactivado |
+| Departamento | Unidad subnacional | Lima, Cusco, Loreto, etc. |
 
 ---
 
-## 🔧 Parte 2: Para el Desarrollador/Analista
+## Parte 2: Documentación Técnica
 
-### 🏗️ Arquitectura del Sistema
-
-#### **ESTRUCTURA GENERAL DEL SISTEMA**
+### Arquitectura del Sistema
 
 ```
 SISTEMA DASHBOARD CLIMÁTICO
-├── 📊 INTERFAZ PRINCIPAL (00_dashboard.py)
-├── 🔄 PROCESAMIENTO DE DATOS (Scripts 01_*)
-├── 🧩 MÓDULOS AUXILIARES (carpeta src/)
-└── 📁 ESTRUCTURA DE DATOS (carpeta data/)
+├── Interfaz Principal (00_dashboard.py)
+├── Procesamiento Batch (Scripts 01_*)
+├── Módulos Auxiliares (src/)
+└── Estructura de Datos (data/)
 ```
 
----
+### 1. Interfaz Principal (00_dashboard.py)
 
-### **📊 INTERFAZ PRINCIPAL**
+Aplicación web Streamlit que orquesta:
+- Gestión de estado mediante `st.session_state`
+- Sidebar con controles de configuración
+- Sistema de vistas (Inicio, Cambios, Series, Promedio)
+- Integración de módulos de visualización
+- Cache para optimización de rendimiento
 
-#### **00_dashboard.py** ⭐
-**Función**: Aplicación web completa con Streamlit
-
+**Flujo principal:**
 ```
-Flujo de la interfaz:
-1. USUARIO → Selecciona parámetros en Sidebar
-2. SISTEMA → Detecta vista activa (Inicio/Cambios/Series/Promedio)
-3. CARGA → Llama módulos correspondientes según vista
-4. VISUALIZA → Muestra gráficos en área principal
-5. ACTUALIZA → Maneja estado con st.session_state
+Usuario → Selección parámetros → Detección vista → Carga datos → Generación visualización
 ```
 
-**Componentes clave**:
-- **Sidebar**: Controles de selección (modelos, variables, periodos)
-- **Área principal**: Visualizaciones según vista seleccionada
-- **Gestión de estado**: Cache para series temporales
-- **Estilos CSS**: Personalización visual para SMN
+### 2. Scripts de Procesamiento Batch
 
----
+#### 01_preproc_01_dep.py
+Procesamiento geoespacial por departamento:
+- **Entrada**: NetCDF en `data/modelos_agre/`
+- **Proceso**: Interpolación (0.1°), recorte departamental, cálculo de promedio espacial
+- **Salida**: CSV en `data/procesados/` (formato: fecha × departamento)
 
-### **🔄 PROCESAMIENTO**
+#### 01_preproc_02_cambio.py
+Cálculo de cambios climáticos y significancia:
+- **Periodos**: Histórico (1981-2010/1991-2020) vs Futuro (ventana 30 años)
+- **Algoritmo**: Δ = Futuro - Histórico, con test estadístico por punto de grilla
+- **Salidas**: NetCDF (`mod_cambios/`) + numpy arrays (`mod_significancia/`)
 
-#### **4 Scripts Principales** (ejecución secuencial)
+#### 01_preproc_03_ens_cdo.py
+Generación de ensambles multimodelo:
+- **Requisito**: CDO (Climate Data Operators) instalado
+- **Comando**: `cdo ensmean modelo1.nc modelo2.nc ... ensemble.nc`
+- **Salidas**: Ensambles brutos, cambios y significancia en `data/ensamble/`
 
-```
-📁 DATOS BRUTOS (modelos_agre/*.nc)
-    │
-    ▼
-┌─────────────────────────────────────┐
-│   01_preproc_01_dep.py              │ ← 📊 Procesa por departamento
-│   • Entrada: NetCDF modelos         │
-│   • Salida: CSV por depto          │
-└─────────────────┬───────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────┐
-│   01_preproc_02_cambio.py           │ ← 🔄 Calcula cambios + significancia
-│   • Cambios: futuro vs referencia   │
-│   • Significancia: test estadístico │
-└─────────────────┬───────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────┐
-│   01_preproc_03_ens_cdo.py          │ ← 🧮 Genera ensambles (requiere CDO)
-│   • Agrupa modelos por variable     │
-│   • Promedio multimodelo con CDO    │
-└─────────────────┬───────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────┐
-│   01_preproc_04_toe.py              │ ← ⏰ Calcula Time of Emergence
-│   • Algoritmo de 5 partes          │
-│   • Detección señal/ruido          │
-└─────────────────────────────────────┘
-```
+#### 01_preproc_04_toe.py
+Cálculo de Time of Emergence:
+- **Algoritmo**: 5-part algorithm implementado en `aux_calcular_toe.py`
+- **Salida**: NetCDF con TOE_1 y TOE_2 en `data/mod_toe/`
 
----
+### 3. Módulos Auxiliares (src/)
 
-### **🧩 MÓDULOS AUXILIARES (src/)**
+#### Categoría: Algoritmos Científicos
+- `aux_cambios_significancia.py`: Funciones base para cambios y tests estadísticos
+- `aux_ens_cdo.py`: Interfaz con CDO para cálculo de ensambles
+- `aux_calcular_toe.py`: Implementación completa del algoritmo TOE (5 partes)
 
-#### **1. ALGORITMOS CIENTÍFICOS 🧪**
-```
-aux_cambios_significancia.py
-├── seleccionar_periodo() → Filtra años
-├── calcular_delta() → Cambios (absoluto/porcentual)
-└── calcular_pvals() → Significancia estadística
+#### Categoría: Carga de Datos
+- `data_loader_cambios.py`: Carga cambios por modelo individual
+- `data_loader_promedio.py`: Carga datos de ensamble y TOE
+- `series_temporales.py`: Carga series por departamento
+- `estadisticas_series.py`: Cálculo de métricas comparativas
 
-aux_ens_cdo.py (interfaz CDO)
-├── calcular_ensemble_cdo() → Ejecuta "cdo ensmean"
-└── verificar_ensemble_existente() → Evita reproceso
+#### Categoría: Generación de Visualizaciones
+- `graficos_cambios.py`: Mapas de cambios (Matplotlib + Cartopy)
+- `graficos_promedio.py`: 3-map layout para ensambles (Plotly)
+- `graficos_series.py`: Series temporales (Plotly)
+- `mapa_interactivo.py`: Mapas departamentales interactivos
 
-aux_calcular_toe.py (algoritmo TOE en 5 partes)
-├── Parte 1: Ajuste polinomial + residuos
-├── Parte 2: Agregación temporal
-├── Parte 3: Variabilidad interna
-├── Parte 4: Preparación series
-└── Parte 5: Detección con umbrales
-```
+#### Categoría: Utilidades
+- `dashboard_utils.py`: Funciones auxiliares (detectores, parsers, verificadores)
 
-#### **2. CARGA DE DATOS 💾**
-```
-data_loader_cambios.py → Cambios por modelo individual
-data_loader_promedio.py → Datos de ensamble y TOE
-series_temporales.py → Series por departamento
-estadisticas_series.py → Cálculo métricas comparativas
-```
+### 4. Estructura de Datos
 
-#### **3. GENERACIÓN DE GRÁFICOS 🎨**
-```
-graficos_cambios.py → Mapas con Matplotlib (por modelo)
-graficos_promedio.py → 3 mapas con Plotly (ensamble)
-graficos_series.py → Series temporales con Plotly
-mapa_interactivo.py → Mapas departamentales interactivos
-```
-
-#### **4. UTILITARIOS 🛠️**
-```
-dashboard_utils.py → Funciones auxiliares
-├── obtener_lista_modelos() → Detecta modelos disponibles
-├── separar_var_agre() → Procesa cadenas
-└── verificar_datos_disponibles() → Diagnóstico sistema
-```
-
----
-
-### **📁 ESTRUCTURA DE DATOS**
-
-#### **Jerarquía de carpetas:**
 ```
 data/
-├── 📂 geo/                   # Archivos geoespaciales
-│   └── peru32.geojson       # Límites departamentales
-│
-├── 📂 modelos_agre/         # ENTRADA PRINCIPAL
-│   └── {var}_{agg}_{modelo}_{ssp}.nc
-│
-├── 📂 procesados/           # Series por departamento
-│   └── {modelo}_{var}_{agg}_{ssp}.csv
-│
-├── 📂 mod_cambios/          # Cambios por modelo
-│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{cy}.nc
-│
-├── 📂 mod_significancia/    # p-valores por modelo
-│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{cy}.npy
-│
-├── 📂 ensamble/             # Resultados multimodelo
-│   ├── 📂 datos/            # Ensambles brutos
-│   ├── 📂 cambios/          # Cambios de ensamble
-│   └── 📂 significancia/    # Significancia de ensamble
-│
-└── 📂 mod_toe/              # Time of Emergence
-    └── ensemble_{var}_{agg}_toe.nc
+├── geo/peru32.geojson                   # Límites departamentales
+├── modelos_agre/                        # ENTRADA PRINCIPAL
+│   └── {variable}_{agregacion}_{modelo}_{ssp}.nc
+├── procesados/                          # Series por departamento
+│   └── {modelo}_{variable}_{agregacion}_{ssp}.csv
+├── mod_cambios/                         # Cambios por modelo
+│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{año}.nc
+├── mod_significancia/                   # p-valores por modelo
+│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{año}.npy
+├── ensamble/                            # Resultados multimodelo
+│   ├── datos/                          # Ensambles brutos
+│   ├── cambios/                        # Cambios del ensamble
+│   └── significancia/                  # Significancia del ensamble
+└── mod_toe/                            # Time of Emergence
+    └── ensemble_{variable}_{agregacion}_toe.nc
 ```
 
----
+### Formatos de Archivo
 
-### **🔄 FLUJOS DE DATOS PRINCIPALES**
-
-#### **FLUJO 1: Datos crudos → Series departamentales**
-```
-1. NetCDF modelos → Interpolación a resolución 0.5°
-2. Recorte por geometría departamental
-3. Cálculo promedio espacial por departamento
-4. Guardado como CSV (fecha × departamento)
-```
-
-#### **FLUJO 2: Datos crudos → Cambios climáticos**
-```
-1. Selección periodo histórico (1981-2010 / 1991-2020)
-2. Selección periodo futuro (ventana 30 años centrada)
-3. Cálculo diferencia futuro-histórico
-4. Test estadístico (Mann-Whitney U) por punto de grilla
-5. Guardado: NetCDF (cambios) + numpy (p-valores)
-```
-
-#### **FLUJO 3: Múltiples modelos → Ensamble**
-```
-1. Agrupación por variable/agregación/escenario
-2. Ejecución: cdo ensmean modelo1.nc modelo2.nc ... ensemble.nc
-3. Cálculo cambios y significancia sobre ensamble
-4. Guardado estructura similar a modelos individuales
-```
-
-#### **FLUJO 4: Modelos → Time of Emergence**
-```
-PASO 1: Ajuste polinomial (grado 4) por modelo
-PASO 2: Separación tendencia/residuos
-PASO 3: Cálculo variabilidad interna (ventanas móviles)
-PASO 4: Relación señal/ruido = tendencia / √(variabilidad)
-PASO 5: Detección cuando S/N > umbral (1°C o ±1%)
-```
-
----
-
-### **🔗 CONEXIONES ENTRE MÓDULOS**
-
-#### **Preprocesamiento → Dashboard**
-```
-01_preproc_01_dep.py → series_temporales.py
-    (CSV por depto)     (Carga para gráficos)
-
-01_preproc_02_cambio.py → data_loader_cambios.py
-    (Cambios por modelo)  (Carga para mapas)
-
-01_preproc_03_ens_cdo.py → data_loader_promedio.py
-    (Ensamble)            (Carga para gráficos promedio)
-
-01_preproc_04_toe.py → data_loader_promedio.py
-    (TOE)                 (Carga para mapa TOE)
-```
-
-#### **Data Loaders → Generadores Gráficos**
-```
-data_loader_cambios.py → graficos_cambios.py
-    (cargar_cambios)       (generar_mapa_multimodelo)
-
-data_loader_promedio.py → graficos_promedio.py
-    (cargar_cambios_ensemble) (generar_mapa_promedio)
-
-series_temporales.py → graficos_series.py
-    (cargar_series_modelos)   (crear_grafico_series)
-```
-
-
-### 🗃️ Estructura de NetCDF
-
-#### **Entradas (`data/modelos_agre/`)**
-```
-{tasmin,tasmax,pr}_{ANUAL,DEF,MAM,JJA,SON}_{modelo}_{ssp245,ssp585}.nc
-```
-
-**Ejemplo**: `tasmin_ANUAL_ecmwf-51_ssp245.nc`
-
-**Estructura interna NetCDF**:
+#### Entrada NetCDF:
 ```python
 Dimensions:  (time: 85, lat: 40, lon: 83)  # 1981-2065, resolución ~0.5°
 Variables:
-    tasmin (time, lat, lon)  # Temperatura mínima en °C
-    pr (time, lat, lon)      # Precipitación en mm/día
+    tasmin (time, lat, lon)  # Temperatura mínima (°C)
+    pr (time, lat, lon)      # Precipitación (mm/día)
 Coordinates:
     time: datetime64[ns]     # 1981-01-01 a 2065-12-31
     lat: float64            # -19.0 a -0.5
     lon: float64            # -82.0 a -0.5
 ```
 
-#### **Salidas Generadas**
-
-##### `data/procesados/` (Series departamentales)
+#### Salida CSV (series):
 ```csv
-# tasmin_ANUAL_ecmwf-51_ssp245.csv
-Fecha,AMAZONAS,ANCASH,APURIMAC,AR...
+Fecha,AMAZONAS,ANCASH,APURIMAC,...
 1981-01-01,15.2,12.4,10.8,...
 1982-01-01,15.3,12.5,10.9,...
-...
 ```
 
-##### `data/mod_cambios/` (Cambios por modelo)
+### Parámetros de Configuración
+
+| Parámetro | Módulo | Valor | Descripción |
+|-----------|--------|-------|-------------|
+| `reso` | 01_preproc_01_dep.py | 0.5 | Resolución de interpolación (°) |
+| `FUT_WINDOW` | 01_preproc_02_cambio.py | 30 | Ventana temporal futura (años) |
+| `CENTER_YEARS` | 01_preproc_02_cambio.py | [2030, 2035, 2040, 2045, 2050] | Años centro |
+| `levels` (pr) | graficos_cambios.py | np.arange(-100, 110, 10) | Contornos para precipitación |
+| `levels` (temp) | graficos_cambios.py | np.arange(-4, 4.5, 0.5) | Contornos para temperatura |
+| `deg` (polyfit) | aux_calcular_toe.py | 4 | Grado del polinomio de ajuste |
+| `window` (rolling) | aux_calcular_toe.py | 10 | Ventana móvil para suavizado |
+
+### Algoritmos Implementados
+
+#### Cálculo de Cambios:
+- **Temperatura**: ΔT = T_futuro - T_histórico (°C)
+- **Precipitación**: ΔP% = ((P_futuro - P_histórico) / P_histórico) × 100
+
+#### Test de Significancia:
 ```python
-# ecmwf-51_tasmin_ANUAL_ssp245_1981-2010_centro-2050.nc
-Dimensions:  (lat: 40, lon: 83)
-Variables:
-    delta_tasmin (lat, lon)  # Cambio en °C
-Attributes:
-    center_year: 2050
-    reference: 1981-2010
-    agregacion: ANUAL
-    ssp: ssp245
+# Prueba t de Student para muestras independientes
+t_stat, p_val = stats.ttest_ind(hist_series, fut_series, 
+                                 equal_var=False, nan_policy='omit')
 ```
 
-##### `data/mod_significancia/` (Significancia estadística)
-```python
-# ecmwf-51_tasmin_ANUAL_ssp245_1981-2010_centro-2050.npy
-Shape: (40, 83)  # lat × lon
-Dtype: float64
-Valores: p-values (0.0 a 1.0)
-```
+#### Time of Emergence (5-part algorithm):
+1. Ajuste polinomial (grado 4) → Tendencia + Residuos
+2. Separación señal/ruido
+3. Cálculo variabilidad interna (ventanas móviles)
+4. Relación señal/ruido = Tendencia / √(Variabilidad)
+5. Detección cuando S/N > umbral (1°C o ±1%)
 
-##### `data/ensamble/` (Resultados multimodelo)
-```
-ensamble/
-├── datos/                          # Ensambles brutos
-│   └── ensemble_{var}_{agg}_{ssp}.nc
-├── cambios/                        # Cambios del ensamble
-│   └── ensemble_{var}_{agg}_{ssp}_{base}_centro-{cy}.nc
-└── significancia/                  # Significancia del ensamble
-    └── ensemble_{var}_{agg}_{ssp}_{base}_centro-{cy}.npy
-```
+### Flujos de Trabajo
 
-##### `data/mod_toe/` (Time of Emergence)
-```python
-# ensemble_tasmin_ANUAL_toe.nc
-Dimensions:  (lat: 40, lon: 83)
-Variables:
-    TOE_1 (lat, lon)  # Emergencia con umbral 1°C (temperatura) o -1% (precipitación)
-    TOE_2 (lat, lon)  # Emergencia con umbral 2°C (temperatura) o +1% (precipitación)
-```
-
-### ⚙️ Configuración Técnica Avanzada
-
-#### **Parámetros Clave por Módulo**
-
-| Módulo | Parámetro | Valor | Descripción |
-|--------|-----------|-------|-------------|
-| `01_preproc_01_dep.py` | `reso` | 0.5 | Resolución de interpolación (°) |
-| `01_preproc_02_cambio.py` | `FUT_WINDOW` | 30 | Ventana temporal para futuro (años) |
-| `01_preproc_02_cambio.py` | `CENTER_YEARS` | [2030, 2035, 2040, 2045, 2050] | Años centro para análisis |
-| `graficos_cambios.py` | `levels` (pr) | np.arange(-100, 110, 10) | Contornos para precipitación |
-| `graficos_cambios.py` | `levels` (temp) | np.arange(-4, 4.5, 0.5) | Contornos para temperatura |
-| `aux_calcular_toe.py` | `deg` (polyfit) | 4 | Grado del polinomio de ajuste |
-| `aux_calcular_toe.py` | `window` (rolling) | 10 | Ventana móvil para suavizado (años) |
-
-#### **Algoritmos Estadísticos Implementados**
-
-1. **Test de Significancia** (`aux_cambios_significancia.py`):
-   ```python
-   # Prueba t de Student para muestras independientes
-   t_stat, p_val = stats.ttest_ind(hist_series, fut_series, 
-                                    equal_var=False, nan_policy='omit')
-   ```
-
-2. **Cálculo de Cambios**:
-   - **Temperatura**: ΔT = T_futuro - T_histórico (en °C)
-   - **Precipitación**: ΔP% = ((P_futuro - P_histórico) / P_histórico) × 100
-
-3. **Time of Emergence** (5-part algorithm):
-   ```
-   Input: Series temporales multimodelo
-   Step 1: Ajuste polinomial (grado 4) → Tendencia + Residuos
-   Step 2: Variabilidad interna = f(residuos, ventana móvil)
-   Step 3: Relación señal/ruido = Tendencia / √(Variabilidad)
-   Step 4: Detección: S/N > umbral durante N años consecutivos
-   Step 5: TOE = Primer año de detección sostenida
-   ```
-
-#### **Gestión de Memoria y Rendimiento**
-
-| Técnica | Módulo | Beneficio |
-|---------|--------|-----------|
-| **Carga** | xarray.open_dataset() | Reduce uso de memoria inicial |
-| **Verificación de existencia** | Todos los preprocesadores | Evita reprocesamiento |
-| **Cache en sesión** | 00_dashboard.py (series_dict) | Acelera navegación |
-| **Procesamiento por chunks** | Implícito en xarray | Manejo de grandes datasets |
-| **Formato CSV para series** | 01_preproc_01_dep.py | Acceso rápido a datos frecuentes |
-
-### 📊 Validación y Control de Calidad
-
-#### **Verificaciones Implementadas**
-
-1. **Consistencia dimensional**:
-   ```python
-   # En aux_cambios_significancia.py
-   if hist_mean.shape != fut_mean.shape:
-       fut_mean = fut_mean.reindex_like(hist_mean)
-   ```
-
-2. **Validación de datos faltantes**:
-   ```python
-   # Remoción segura de NaN antes de cálculos
-   hist_series = hist_series[~np.isnan(hist_series)]
-   fut_series = fut_series[~np.isnan(fut_series)]
-   ```
-
-3. **Umbrales de calidad**:
-   - Mínimo 2 años de datos para tests estadísticos
-   - Valores infinitos convertidos a NaN
-   - Coordenadas fuera de Perú filtradas implícitamente
-
-#### **Mensajes de Error Informativos**
-
-| Error | Módulo | Mensaje | Acción recomendada |
-|-------|--------|---------|-------------------|
-| Archivo no encontrado | data_loader_cambios.py | "no existe {ruta}" | Verificar preprocesamiento |
-| Dimensión temporal faltante | aux_cambios_significancia.py | "No se encontró dimensión temporal" | Revisar formato NetCDF |
-| CDO no disponible | 01_preproc_03_ens_cdo.py | "✗ ERROR: CDO no está instalado" | `conda install -c conda-forge cdo` |
-| Shapefile faltante | graficos_cambios.py | "Error cargando shapefile" | Verificar `data/geo/peru32.geojson` |
-
-### 🔄 Flujos de Trabajo Recomendados
-
-#### **Para Nuevos Datos de Modelos**
+#### Para Nuevos Datos:
 ```bash
-# 1. Colocar nuevos NetCDF en data/modelos_agre/
-# 2. Ejecutar preprocesamiento secuencial
+# 1. Colocar NetCDF en data/modelos_agre/
+# 2. Ejecutar procesamiento secuencial
 python 01_preproc_01_dep.py      # ~10 min para 10 modelos
 python 01_preproc_02_cambio.py   # ~15 min para 100 combinaciones
-python 01_preproc_03_ens_cdo.py  # ~5 min (si CDO disponible)
+python 01_preproc_03_ens_cdo.py  # ~5 min (requiere CDO)
 python 01_preproc_04_toe.py      # ~8 min por variable
 
 # 3. Verificar salidas
@@ -454,21 +211,24 @@ ls -lh data/mod_cambios/*.nc | wc -l
 ls -lh data/ensamble/cambios/*.nc
 ```
 
-#### **Para Desarrollo de Nuevas Funcionalidades**
+#### Para Desarrollo:
 ```python
 # Patrón recomendado para nuevos módulos:
 # 1. Ubicar en src/ según categoría
 # 2. Importar en 00_dashboard.py si es necesario
 # 3. Usar dashboard_utils.py para funciones comunes
 # 4. Seguir convenciones de nombres existentes
-
-# Ejemplo: Nuevo tipo de gráfico
-# src/graficos_nuevos.py → importado en 00_dashboard.py
-# Usar st.session_state para manejo de estado # IMPORTANTE!
 ```
+#### Mensajes de Error Informativos
 
-### 🚨 Consideraciones Críticas
+| Error | Módulo | Mensaje | Acción recomendada |
+|-------|--------|---------|-------------------|
+| Archivo no encontrado | data_loader_cambios.py | "no existe {ruta}" | Verificar preprocesamiento |
+| Dimensión temporal faltante | aux_cambios_significancia.py | "No se encontró dimensión temporal" | Revisar formato NetCDF |
+| CDO no disponible | 01_preproc_03_ens_cdo.py | "✗ ERROR: CDO no está instalado" | `conda install -c conda-forge cdo` |
+| Shapefile faltante | graficos_cambios.py | "Error cargando shapefile" | Verificar `data/geo/peru32.geojson` |
 
+### Consideraciones Técnicas
 Se recomienda crear el ambiente desde cero para evitar conflictos de binarios geoespaciales:
 
 ```bash
@@ -479,63 +239,61 @@ conda activate e7-cc
 streamlit run 00_dashboard.py
 ```
 
-#### **Requisitos Específicos**
-1. **CDO**: Obligatorio para ensambles (`01_preproc_03_ens_cdo.py`)
-   ```bash
-   conda install -c conda-forge cdo
-   ```
+#### Requisitos:
+- **CDO**: Obligatorio para ensambles (`conda install -c conda-forge cdo`)
+- **Memoria RAM**: Mínimo 8 GB (recomendado 16+ GB)
+- **Espacio disco**: ~10 GB para datos completos
 
-2. **Memoria RAM**: 
-   - Mínimo: 8 GB para procesamiento
-   - Recomendado: 16+ GB para múltiples modelos simultáneos
+#### Validaciones:
+1. Verificación de existencia de archivos antes de procesar
+2. Consistencia dimensional entre datos históricos y futuros
+3. Manejo robusto de NaN y valores extremos
+4. Umbrales de calidad (mínimo 2 años para tests estadísticos)
 
+#### Limitaciones Conocidas:
+- Periodos base fijos (1981-2010, 1991-2020)
+- Solo escenarios SSP245 y SSP585 completamente implementados
+- Resolución espacial fija a 0.5°
+- Formato específico de nombres de archivos requerido
 
-#### **Limitaciones Conocidas**
-1. **Periodo histórico**: Fijo a 1981-2010 o 1991-2020 (no configurable desde dashboard)
-2. **Modelos soportados**: Requieren formato específico de nombres
-3. **Escenarios**: Solo SSP245 y SSP585 implementados completamente
-
-#### **Extensiones Futuras**
-1. **Más escenarios**: SSP126, SSP370, SSP434, SSP460
-2. **Indicadores derivados**: Índices de extremos, días secos/consecutivos
-3. **Análisis de incertidumbre**: Intervalos de confianza, percentiles
-4. **Exportación avanzada**: PDF, PNG de alta resolución, datos tabulares
+#### Extensiones Futuras:
+- Más escenarios (SSP126, SSP370, etc.)
+- Indicadores derivados (índices de extremos)
+- Análisis de incertidumbre (intervalos de confianza)
+- Exportación avanzada (PDF, PNG, datos tabulares)
 
 ---
 
 ## Soporte y Mantenimiento
 
-### **Equipo Responsable**
+### Equipo Responsable
 - **Locación SMN** - JAPQ
-- **Contacto**: [japaredesq@gmail.com]
-- **Repositorio**: [https://github.com/Japq91/e7_dashboard]
+- **Contacto**: japaredesq@gmail.com
+- **Repositorio**: https://github.com/Japq91/e7_dashboard
 
-### **Actualización**
-1. **Semestral**: Revisión de algoritmos estadísticos
-2. **Anual**: Incorporación de nuevos modelos CMIP6
+### Ciclo de Actualización
+- **Semestral**: Revisión de algoritmos estadísticos
+- **Anual**: Incorporación de nuevos modelos CMIP6
 
-### **Registro de Cambios**
+### Registro de Cambios
 | Versión | Fecha | Cambios Principales |
 |---------|-------|---------------------|
 | 1.0 | Dic 2025 | Versión inicial con procesamiento básico |
-| _._ | Mon 202# | Modificación 1, 2, 3, 4, 5, 6, etc. |
 
+## Referencias
 
----
-### 📚 Referencias
-#### R. Bibliografía
+### Bibliografía
+1. Hawkins, E., & Sutton, R. (2012). *Time of emergence of climate signals*. Geophysical Research Letters.
+2. Eyring, V., et al. (2016). *Overview of the Coupled Model Intercomparison Project Phase 6 (CMIP6)*.
+3. Schulzweida, U. (2019). *CDO User Guide*. Max Planck Institute for Meteorology.
 
-1.  **Time of Emergence:** Hawkins, E., & Sutton, R. (2012). *Time of emergence of climate signals*. Geophysical Research Letters.
-2.  **CMIP6:** Eyring, V., et al. (2016). *Overview of the Coupled Model Intercomparison Project Phase 6 (CMIP6)*.
-3.  **CDO:** Schulzweida, U. (2019). *CDO User Guide*. Max Planck Institute for Meteorology. [CDO (Climate Data Operators)](https://code.mpimet.mpg.de/projects/cdo) 
+### Referencias Técnicas
+1. **CDO**: https://code.mpimet.mpg.de/projects/cdo
+2. **xarray**: https://xarray.pydata.org/
+3. **CMIP6**: https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6
+4. **Plotly**: https://plotly.com/python/
+5. **Streamlit**: https://streamlit.io/
 
-#### R. Técnicas
-
-1. **CDO (Climate Data Operators)**: https://code.mpimet.mpg.de/projects/cdo
-2. **xarray**: https://xarray.pydata.org/ - Manejo de datos multidimensionales
-3. **CMIP6 (Coupled Model Intercomparison Project Phase 6)**: https://www.wcrp-climate.org/wgcm-cmip/wgcm-cmip6
-4. **Plotly**: https://plotly.com/python/ - Visualizaciones interactivas
-5. **Streamlit**: https://streamlit.io/ - Framework para aplicaciones de datos
 ---
 
 *Documentación actualizada: Diciembre 2025*  
