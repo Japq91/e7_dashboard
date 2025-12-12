@@ -65,408 +65,227 @@ Proporcionar una interfaz intuitiva para explorar:
 
 ## 🔧 Parte 2: Para el Desarrollador/Analista
 
-## 🏗️ Arquitectura del Flujo de Procesamiento
+### 🏗️ Arquitectura del Sistema
 
-Este diagrama ilustra el flujo de datos y procesamiento, dividido en las cuatro capas principales de la aplicación.
+#### **ESTRUCTURA GENERAL DEL SISTEMA**
 
-```mermaid
-graph TD
-    %% Estilos para simplificar la visualización en el README
-    classDef layer style fill:#f9f,stroke:#333,stroke-width:2px,color:#000;
-    classDef data style fill:#def,stroke:#333,stroke-width:2px,color:#000;
-    classDef proc style fill:#dff,stroke:#333,stroke-width:2px,color:#000;
-    classDef viz style fill:#ffd,stroke:#333,stroke-width:2px,color:#000;
-    classDef aux style fill:#eee,stroke:#999,stroke-width:1px,color:#333;
+```
+SISTEMA DASHBOARD CLIMÁTICO
+├── 📊 INTERFAZ PRINCIPAL (00_dashboard.py)
+├── 🔄 PROCESAMIENTO DE DATOS (Scripts 01_*)
+├── 🧩 MÓDULOS AUXILIARES (carpeta src/)
+└── 📁 ESTRUCTURA DE DATOS (carpeta data/)
+```
 
-    %% ===== CAPA DE DATOS (Input) =====
-    subgraph A[1. CAPA DE DATOS (INPUT)]
-        A1[Modelos Climáticos NetCDF y Geospatiales]:::data
-    end
-    
-    %% ===== CAPA DE PROCESAMIENTO (Scripts) =====
-    subgraph B[2. CAPA DE PROCESAMIENTO]
-        B1[Scripts de Preprocesamiento (01_preproc_*.py)]:::proc
-        B2[Resultados Procesados (CSV, Cambios, Ensambles, TOEs)]:::data
-    end
-    
-    %% ===== CAPA DE VISUALIZACIÓN (Output) =====
-    subgraph C[3. CAPA DE VISUALIZACIÓN (DASHBOARD)]
-        C1[00_dashboard.py (Streamlit)]:::viz
-        C2[Mapas y Gráficos Interactivos]:::viz
-    end
-    
-    %% ===== CAPA DE MÓDULOS AUXILIARES (Soporte) =====
-    subgraph D[4. MÓDULOS AUXILIARES (src/*)]
-        D1[Lógica de Utilidades, Carga de Datos y Algoritmos Científicos]:::aux
-    end
-    
-    %% ===== FLUJO PRINCIPAL DE DATOS =====
-    A1 --> B1
-    B1 --> B2
-    B2 --> C1
-    C1 --> C2
-    
-    %% ===== CONEXIONES DE SOPORTE =====
-    D1 -.-> B1
-    D1 -.-> C1
-    
-    %% Indicadores de las capas para el README
-    A[CAPA DE DATOS]:::layer
-    B[CAPA DE PROCESAMIENTO]:::layer
-    C[CAPA DE VISUALIZACIÓN]:::layer
-    D[MÓDULOS AUXILIARES]:::layer
-``` 
-### 📁 Jerarquía de Archivos y Módulos
+---
 
-#### Jerarquía de Datos
+### **📊 INTERFAZ PRINCIPAL**
 
-``` 
+#### **00_dashboard.py** ⭐
+**Función**: Aplicación web completa con Streamlit
+
+```
+Flujo de la interfaz:
+1. USUARIO → Selecciona parámetros en Sidebar
+2. SISTEMA → Detecta vista activa (Inicio/Cambios/Series/Promedio)
+3. CARGA → Llama módulos correspondientes según vista
+4. VISUALIZA → Muestra gráficos en área principal
+5. ACTUALIZA → Maneja estado con st.session_state
+```
+
+**Componentes clave**:
+- **Sidebar**: Controles de selección (modelos, variables, periodos)
+- **Área principal**: Visualizaciones según vista seleccionada
+- **Gestión de estado**: Cache para series temporales
+- **Estilos CSS**: Personalización visual para SMN
+
+---
+
+### **🔄 PROCESAMIENTO**
+
+#### **4 Scripts Principales** (ejecución secuencial)
+
+```
+📁 DATOS BRUTOS (modelos_agre/*.nc)
+    │
+    ▼
+┌─────────────────────────────────────┐
+│   01_preproc_01_dep.py              │ ← 📊 Procesa por departamento
+│   • Entrada: NetCDF modelos         │
+│   • Salida: CSV por depto          │
+└─────────────────┬───────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────┐
+│   01_preproc_02_cambio.py           │ ← 🔄 Calcula cambios + significancia
+│   • Cambios: futuro vs referencia   │
+│   • Significancia: test estadístico │
+└─────────────────┬───────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────┐
+│   01_preproc_03_ens_cdo.py          │ ← 🧮 Genera ensambles (requiere CDO)
+│   • Agrupa modelos por variable     │
+│   • Promedio multimodelo con CDO    │
+└─────────────────┬───────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────┐
+│   01_preproc_04_toe.py              │ ← ⏰ Calcula Time of Emergence
+│   • Algoritmo de 5 partes          │
+│   • Detección señal/ruido          │
+└─────────────────────────────────────┘
+```
+
+---
+
+### **🧩 MÓDULOS AUXILIARES (src/)**
+
+#### **1. ALGORITMOS CIENTÍFICOS 🧪**
+```
+aux_cambios_significancia.py
+├── seleccionar_periodo() → Filtra años
+├── calcular_delta() → Cambios (absoluto/porcentual)
+└── calcular_pvals() → Significancia estadística
+
+aux_ens_cdo.py (interfaz CDO)
+├── calcular_ensemble_cdo() → Ejecuta "cdo ensmean"
+└── verificar_ensemble_existente() → Evita reproceso
+
+aux_calcular_toe.py (algoritmo TOE en 5 partes)
+├── Parte 1: Ajuste polinomial + residuos
+├── Parte 2: Agregación temporal
+├── Parte 3: Variabilidad interna
+├── Parte 4: Preparación series
+└── Parte 5: Detección con umbrales
+```
+
+#### **2. CARGA DE DATOS 💾**
+```
+data_loader_cambios.py → Cambios por modelo individual
+data_loader_promedio.py → Datos de ensamble y TOE
+series_temporales.py → Series por departamento
+estadisticas_series.py → Cálculo métricas comparativas
+```
+
+#### **3. GENERACIÓN DE GRÁFICOS 🎨**
+```
+graficos_cambios.py → Mapas con Matplotlib (por modelo)
+graficos_promedio.py → 3 mapas con Plotly (ensamble)
+graficos_series.py → Series temporales con Plotly
+mapa_interactivo.py → Mapas departamentales interactivos
+```
+
+#### **4. UTILITARIOS 🛠️**
+```
+dashboard_utils.py → Funciones auxiliares
+├── obtener_lista_modelos() → Detecta modelos disponibles
+├── separar_var_agre() → Procesa cadenas
+└── verificar_datos_disponibles() → Diagnóstico sistema
+```
+
+---
+
+### **📁 ESTRUCTURA DE DATOS**
+
+#### **Jerarquía de carpetas:**
+```
 data/
-├── geo/
-│   └── peru32.geojson            # Polígonos departamentales (EPSG:4326)
-├── modelos_agre/                 # [INPUT] NetCDFs de entrada
-│   └── {var}_{agg}_{mod}_{ssp}.nc
-├── procesados/                   # [OUTPUT] Series temporales (CSV)
-│   └── {mod}_{var}_{agg}_{ssp}.csv
-├── mod_cambios/                  # [OUTPUT] Deltas por modelo
-│   └── {mod}_{var}_{agg}_{ssp}_{base}_centro-{y}.nc
-├── mod_significancia/            # [OUTPUT] P-values por modelo
-│   └── {mod}_{var}_{agg}_{ssp}_{base}_centro-{y}.npy
-├── ensamble/                     # [OUTPUT] Datos del Ensamble
-│   ├── datos/                    # Ensamble bruto (CDO)
-│   ├── cambios/                  # Deltas del ensamble
-│   └── significancia/            # P-values del ensamble
-└── mod_toe/                      # [OUTPUT] Time of Emergence
+├── 📂 geo/                   # Archivos geoespaciales
+│   └── peru32.geojson       # Límites departamentales
+│
+├── 📂 modelos_agre/         # ENTRADA PRINCIPAL
+│   └── {var}_{agg}_{modelo}_{ssp}.nc
+│
+├── 📂 procesados/           # Series por departamento
+│   └── {modelo}_{var}_{agg}_{ssp}.csv
+│
+├── 📂 mod_cambios/          # Cambios por modelo
+│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{cy}.nc
+│
+├── 📂 mod_significancia/    # p-valores por modelo
+│   └── {modelo}_{var}_{agg}_{ssp}_{base}_centro-{cy}.npy
+│
+├── 📂 ensamble/             # Resultados multimodelo
+│   ├── 📂 datos/            # Ensambles brutos
+│   ├── 📂 cambios/          # Cambios de ensamble
+│   └── 📂 significancia/    # Significancia de ensamble
+│
+└── 📂 mod_toe/              # Time of Emergence
     └── ensemble_{var}_{agg}_toe.nc
 ```
 
-#### **Nivel 1: Scripts Principales (Orquestación)**
-```
-00_dashboard.py              # ⭐ CORAZÓN DEL SISTEMA - Interfaz principal
-├── 01_preproc_01_dep.py     # 📊 Procesamiento espacial (departamentos)
-├── 01_preproc_02_cambio.py  # 🔄 Cálculo de cambios y significancia
-├── 01_preproc_03_ens_cdo.py # 🧮 Generación de ensambles (requiere CDO)
-└── 01_preproc_04_toe.py     # ⏰ Cálculo de Time of Emergence
-```
+---
 
-#### **Nivel 2: Módulos de Negocio (src/)**
+### **🔄 FLUJOS DE DATOS PRINCIPALES**
+
+#### **FLUJO 1: Datos crudos → Series departamentales**
 ```
-src/
-├── 🧪 ALGORITMOS CIENTÍFICOS
-│   ├── aux_cambios_significancia.py  # 📈 Estadísticas básicas
-│   ├── aux_ens_cdo.py               # 🔗 Interfaz CDO para ensambles
-│   └── aux_calcular_toe.py          # 🎯 Algoritmo TOE (5 partes)
-│
-├── 💾 CARGA DE DATOS
-│   ├── data_loader_cambios.py       # 📂 Cambios por modelo
-│   ├── data_loader_promedio.py      # 📦 Datos de ensamble
-│   ├── series_temporales.py         # 📊 Series por departamento
-│   └── estadisticas_series.py       # 🧮 Cálculo estadístico series
-│
-├── 🎨 GENERACIÓN DE VISUALIZACIONES
-│   ├── graficos_cambios.py          # 🗺️ Mapas de cambios (Matplotlib)
-│   ├── graficos_series.py           # 📈 Series temporales (Plotly)
-│   ├── graficos_promedio.py         # 🌐 Mapas de promedio (Plotly)
-│   └── mapa_interactivo.py          # 📍 Mapas departamentales
-│
-└── 🛠️ UTILITARIOS
-    └── dashboard_utils.py           # 🔧 Funciones auxiliares
+1. NetCDF modelos → Interpolación a resolución 0.5°
+2. Recorte por geometría departamental
+3. Cálculo promedio espacial por departamento
+4. Guardado como CSV (fecha × departamento)
 ```
 
-### 🔄 Flujo de Datos Detallado
-
-#### **Flujo 1: Procesamiento Inicial (Batch)**
-```mermaid
-sequenceDiagram
-    participant U as Usuario
-    participant P1 as 01_preproc_01_dep.py
-    participant P2 as 01_preproc_02_cambio.py
-    participant P3 as 01_preproc_03_ens_cdo.py
-    participant P4 as 01_preproc_04_toe.py
-    participant D as Directorio Data/
-    
-    U->>P1: Ejecuta procesamiento departamental
-    P1->>D: Lee modelos_agre/*.nc
-    P1->>D: Genera procesados/*.csv (series)
-    
-    U->>P2: Ejecuta cálculo de cambios
-    P2->>D: Lee modelos_agre/*.nc
-    P2->>D: Genera mod_cambios/*.nc y mod_significancia/*.npy
-    
-    U->>P3: Ejecuta ensambles (requiere CDO)
-    P3->>D: Agrupa por variable/agregación/escenario
-    P3->>D: Genera ensamble/datos/*.nc (ensambles brutos)
-    P3->>D: Genera ensamble/cambios/*.nc y ensamble/significancia/*.npy
-    
-    U->>P4: Ejecuta cálculo TOE
-    P4->>D: Lee modelos_agre/*.nc
-    P4->>D: Genera mod_toe/*.nc (Time of Emergence)
+#### **FLUJO 2: Datos crudos → Cambios climáticos**
+```
+1. Selección periodo histórico (1981-2010 / 1991-2020)
+2. Selección periodo futuro (ventana 30 años centrada)
+3. Cálculo diferencia futuro-histórico
+4. Test estadístico (Mann-Whitney U) por punto de grilla
+5. Guardado: NetCDF (cambios) + numpy (p-valores)
 ```
 
-#### **Flujo 2: Visualización en Tiempo Real**
-```mermaid
-sequenceDiagram
-    participant U as Usuario (Browser)
-    participant S as Streamlit (00_dashboard.py)
-    participant DL as Data Loaders
-    participant G as Generadores Gráficos
-    participant V as Visualización
-    
-    U->>S: Selecciona parámetros en sidebar
-    S->>DL: Llama funciones de carga según vista
-    
-    alt Vista = "CAMBIOS"
-        DL->>DL: data_loader_cambios.cargar_cambios()
-        DL->>DL: data_loader_cambios.cargar_significancia()
-        DL->>G: graficos_cambios.generar_mapa_multimodelo()
-        G->>V: Retorna figura Matplotlib
-        S->>V: st.pyplot(fig)
-    
-    else Vista = "PROMEDIO"
-        DL->>DL: data_loader_promedio.cargar_cambios_ensemble()
-        DL->>DL: data_loader_promedio.cargar_toe()
-        DL->>G: graficos_promedio.generar_mapa_promedio()
-        G->>V: Retorna figura Plotly
-        S->>V: st.plotly_chart(fig)
-    
-    else Vista = "SERIES"
-        DL->>DL: series_temporales.cargar_series_modelos()
-        DL->>DL: series_temporales.obtener_serie_departamento()
-        DL->>G: graficos_series.crear_grafico_series()
-        DL->>G: mapa_interactivo.crear_mapa_departamentos()
-        DL->>DL: estadisticas_series.calcular_estadisticas_periodos()
-        G->>V: Retorna múltiples visualizaciones
-        S->>V: st.plotly_chart() + st.metric() + st.columns()
-    end
+#### **FLUJO 3: Múltiples modelos → Ensamble**
+```
+1. Agrupación por variable/agregación/escenario
+2. Ejecución: cdo ensmean modelo1.nc modelo2.nc ... ensemble.nc
+3. Cálculo cambios y significancia sobre ensamble
+4. Guardado estructura similar a modelos individuales
 ```
 
-### 🧩 Descripción Detallada de Módulos
-
-#### **1. Scripts Principales**
-
-##### `00_dashboard.py` ⭐ Gaea
-**Función**: Orquestador principal del sistema
-**Utilidad**:
-- Unifica todas las visualizaciones en una interfaz coherente
-- Gestiona estado de sesión para mejor experiencia de usuario
-- Coordina carga de módulos según vista seleccionada
-- Aplica estilos CSS personalizados para identidad visual SMN
-
-**Conexiones clave**:
-- Importa todos los generadores de gráficos
-- Utiliza `dashboard_utils.py` para funcionalidades auxiliares
-- Se comunica con todos los data loaders
-
-##### `01_preproc_01_dep.py` 📊
-**Función**: Procesamiento geoespacial por departamento
-**Algoritmo**:
-1. Carga NetCDF y shapefile de departamentos
-2. Interpola a resolución uniforme (0.5° por defecto)
-3. Calcula promedio espacial por departamento
-4. Guarda series temporales en CSV
-
-**Utilidad**:
-- Reduce dimensionalidad de datos (de grilla a departamento)
-- Facilita análisis a escala subnacional
-- Optimiza rendimiento para series temporales
-
-##### `01_preproc_02_cambio.py` 🔄
-**Función**: Cálculo de cambios climáticos y significancia
-**Algoritmo**:
-1. Para cada combinación (modelo × variable × agregación × escenario)
-2. Calcula diferencia periodo futuro (30 años) vs. referencia
-3. Evalúa significancia con test de Mann-Whitney U
-4. Guarda resultados estructurados
-
-**Utilidad**:
-- Procesamiento paralelo implícito por combinaciones
-- Validación de datos antes de cálculos
-- Estructura de salida estandarizada
-
-##### `01_preproc_03_ens_cdo.py` 🧮
-**Función**: Generación de ensambles multimodelo
-**Dependencia**: CDO (Climate Data Operators)
-**Proceso**:
+#### **FLUJO 4: Modelos → Time of Emergence**
 ```
-cdo ensmean modelo1.nc modelo2.nc ... modeloN.nc ensemble.nc
+PASO 1: Ajuste polinomial (grado 4) por modelo
+PASO 2: Separación tendencia/residuos
+PASO 3: Cálculo variabilidad interna (ventanas móviles)
+PASO 4: Relación señal/ruido = tendencia / √(variabilidad)
+PASO 5: Detección cuando S/N > umbral (1°C o ±1%)
 ```
 
-##### `01_preproc_04_toe.py` ⏰
-**Función**: Cálculo de Time of Emergence
-**Concepto**: Año en que la señal climática emerge del ruido natural
-**Algoritmo** (5 partes implementadas en `aux_calcular_toe.py`):
-1. Ajuste polinomial y cálculo de residuos
-2. Agregación temporal por año
-3. Cálculo de variabilidad interna
-4. Preparación de series temporales
-5. Detección de emergencia con umbrales
+---
 
-#### **2. Módulos Científicos (src/aux_*)**
+### **🔗 CONEXIONES ENTRE MÓDULOS**
 
-##### `aux_cambios_significancia.py` 📈
-**Funciones clave**:
-- `seleccionar_periodo()`: Filtro temporal robusto
-- `calcular_delta()`: Cálculo de cambios (absoluto/porcentual)
-- `calcular_pvals()`: Test de significancia punto a punto
+#### **Preprocesamiento → Dashboard**
+```
+01_preproc_01_dep.py → series_temporales.py
+    (CSV por depto)     (Carga para gráficos)
 
-**Utilidad**:
-- Implementación vectorizada para eficiencia
-- Manejo robusto de NaN y casos extremos
-- Compatible con múltiples estructuras temporales
+01_preproc_02_cambio.py → data_loader_cambios.py
+    (Cambios por modelo)  (Carga para mapas)
 
-##### `aux_ens_cdo.py` 🔗
-**Funciones clave**:
-- `calcular_ensemble_cdo()`: Interfaz con CDO
-- `verificar_ensemble_existente()`: Evita reprocesamiento
+01_preproc_03_ens_cdo.py → data_loader_promedio.py
+    (Ensamble)            (Carga para gráficos promedio)
 
-
-##### `aux_calcular_toe.py` 🎯
-**Estructura algorítmica**:
-```python
-def calcular_toe_completo():
-    # Parte 1: Procesamiento inicial por modelo y escenario
-    lst_var_mdl, lst_prom_mdl, delta3, residuo4, k = parte_1()    
-    # Parte 2: Agregación temporal y cálculo de momentos estadísticos
-    G0, SU0, MU0, residuo41 = parte_2()    
-    # Parte 3: Cálculo de variabilidad interna en ventanas móviles
-    residuo_45_std, _ = parte_3()    
-    # Parte 4: Preparación de series para detección
-    VI, G, SU, MU = parte_4()    
-    # Parte 5: Detección de emergencia con umbrales
-    resultados = parte_5()  # Retorna TOE_1 y TOE_2
+01_preproc_04_toe.py → data_loader_promedio.py
+    (TOE)                 (Carga para mapa TOE)
 ```
 
-**Utilidad**:
-- Ajuste polinomial de grado 4 para tendencias
-- Separación señal/ruido mediante residuos
-- Umbrales adimensionales por variable:
-  - Temperatura: 1 y 2
-  - Precipitación: ±1
+#### **Data Loaders → Generadores Gráficos**
+```
+data_loader_cambios.py → graficos_cambios.py
+    (cargar_cambios)       (generar_mapa_multimodelo)
 
-#### **3. Módulos de Carga de Datos (src/data_loader_*)**
+data_loader_promedio.py → graficos_promedio.py
+    (cargar_cambios_ensemble) (generar_mapa_promedio)
 
-##### `data_loader_cambios.py` 📂
-**Patrón de diseño**: Fachada para acceso a datos
-**Funciones**:
-- `cargar_cambios()`: Carga NetCDF de cambios por modelo
-- `cargar_significancia()`: Carga arrays numpy de p-valores
-- `obtener_vmin_vmax()`: Define rangos de visualización
+series_temporales.py → graficos_series.py
+    (cargar_series_modelos)   (crear_grafico_series)
+```
 
-**Utilidad**:
-- Desacopla formatos de almacenamiento de lógica de visualización
-- Manejo transparente de nombres de variables
-- Cache implícito mediante xarray.open_dataset()
 
-##### `data_loader_promedio.py` 📦
-**Especialización**: Datos de ensambles y TOE
-**Funciones**:
-- `cargar_cambios_ensemble()`: Cambios del ensamble multimodelo
-- `cargar_toe()`: Time of Emergence
-- `cargar_significancia_ensemble()`: P-valores del ensamble
-
-**Utilidad**:
-- Unifica acceso a datos de ensambles
-- Proporciona metadatos para configuración de gráficos
-- Maneja diferencias de formato entre archivos
-
-##### `series_temporales.py` 📊
-**Responsabilidad**: Manipulación de series por departamento
-**Funciones**:
-- `cargar_series_modelos()`: Carga CSV de `data/procesados/`
-- `obtener_serie_departamento()`: Extrae y combina series
-
-**Utilidad**:
-- Optimizado para consultas frecuentes (CSV)
-- Cálculo automático de promedio multimodelo
-- Compatible con selección dinámica de departamentos
-
-##### `estadisticas_series.py` 🧮
-**Métricas calculadas**:
-- Promedios y desviaciones estándar por periodo
-- Cambios absolutos y porcentuales
-- Tamaños de muestra (años disponibles)
-
-**Utilidad**:
-- Cálculos consistentes con visualizaciones
-- Formateo apropiado por tipo de variable
-- Integración con componentes de Streamlit (st.metric)
-
-#### **4. Módulos de Visualización (src/graficos_*)**
-
-##### `graficos_cambios.py` 🗺️
-**Tecnología**: Matplotlib + Cartopy
-**Características**:
-- Disposición automática en grid (hasta 4 columnas)
-- Barra de color común para comparación
-- Marcadores de significancia personalizables
-- Inclusión de shapefile de Perú
-
-**Utilidad**:
-- Sistema de subtítulos dinámicos con metadatos
-- Ajuste automático de márgenes según número de modelos
-- Manejo de proyecciones cartográficas
-
-##### `graficos_promedio.py` 🌐
-**Tecnología**: Plotly
-**Diseño**: 3 mapas horizontales con barras de color independientes
-**Características**:
-- Mapa 1: SSP245 con barra de color compartida
-- Mapa 2: SSP585 (usa misma escala que SSP245)
-- Mapa 3: TOE con escala temporal independiente
-- Puntos de significancia superpuestos como scatter
-
-**Utilidad**:
-- Interactividad nativa (zoom, hover, exportación)
-- Diseño responsive para diferentes dispositivos
-- Leyendas integradas y anotaciones
-
-##### `graficos_series.py` 📈
-**Visualización**: Series temporales multimodelo
-**Elementos**:
-- Líneas individuales por modelo (colores distintivos)
-- Línea de promedio multimodelo (negra gruesa)
-- Tooltips unificados al pasar el mouse
-
-**Utilidad**:
-- Identificación visual rápida de outliers
-- Comparación cuantitativa mediante hover
-- Escalas automáticas según datos
-
-##### `mapa_interactivo.py` 📍
-**Doble vista**:
-1. Vista general de Sudamérica (zoom out)
-2. Vista detallada del departamento seleccionado (±1.9°)
-
-**Técnicas**:
-- GeoPandas para procesamiento geoespacial
-- Plotly Express para renderizado interactivo
-- Cálculo dinámico de bounding boxes
-
-#### **5. Módulos Utilitarios (src/dashboard_utils.py)**
-
-##### `dashboard_utils.py` 🔧
-**Categorías de funciones**:
-
-1. **Detección de datos disponibles**:
-   - `obtener_lista_modelos()`: Escanea `modelos_agre/`
-   - `obtener_lista_var_agre()`: Extrae combinaciones únicas
-   - `obtener_lista_year_ssp()`: Detecta periodos futuros disponibles
-
-2. **Procesamiento de cadenas**:
-   - `separar_var_agre()`: Parse "tasmin_ANUAL" → ("tasmin", "ANUAL")
-   - `separar_centro_ssp()`: Parse "2050_ssp585" → ("2050", "ssp585")
-
-3. **Metadatos y configuraciones**:
-   - `obtener_unidad_variable()`: "pr" → "mm"
-   - `obtener_nombre_completo_variable()`: "tasmin" → "Temperatura mínima"
-   - `verificar_datos_disponibles()`: Diagnóstico del sistema
-
-**Utilidad**:
-- Centralización de lógica repetitiva
-- Mejora mantenibilidad del código
-- Facilita actualizaciones de estructura de datos
-
-### 🗃️ Estructura de Datos Detallada
+### 🗃️ Estructura de NetCDF
 
 #### **Entradas (`data/modelos_agre/`)**
 ```
