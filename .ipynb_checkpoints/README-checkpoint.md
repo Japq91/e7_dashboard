@@ -115,7 +115,7 @@ graph TD
     B[CAPA DE PROCESAMIENTO]:::layer
     C[CAPA DE VISUALIZACIÓN]:::layer
     D[MÓDULOS AUXILIARES]:::layer
-
+``` 
 ### 📁 Jerarquía de Archivos y Módulos
 
 #### Jerarquía de Datos
