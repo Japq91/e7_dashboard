@@ -1,0 +1,39 @@
+name: e7-cc
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Base
+  - python=3.8
+  - pip
+
+  # Científico
+  - numpy
+  - pandas
+  - xarray
+  - scipy
+
+  # Visualización
+  - matplotlib
+  - plotly
+  - streamlit
+
+  # Geoespacial (SIEMPRE conda)
+  - geopandas
+  - gdal
+  - rasterio
+  - pyproj
+  - shapely
+  - rioxarray
+  - netcdf4
+  - h5py
+
+  # Otros
+  - folium
+  - streamlit-folium
+
+  # Pip SOLO para lo que no existe en conda
+  - pip:
+      - altair
