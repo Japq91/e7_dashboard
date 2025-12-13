@@ -62,11 +62,13 @@ def cargar_toe(variable, agregacion):
     Carga el TOE (Time of Emergence) para una variable y agregación.
     
     Args:
-        variable: Variable climática
-        agregacion: Agregación temporal
+        variable: Variable -> pr, tasmax, tasmin
+        agregacion: Agregación temporal -> SON, JJA, Anual, etc.
     
     Returns:
-        DataArray con el TOE
+        DataArray con el TOE 1
+        TOE1 para temperatura es el TOE 1
+        TOE1 para precipitacion es el TOE -1, osea valores negativos
     """
     ruta_base = "data/mod_toe"
     
@@ -80,12 +82,14 @@ def cargar_toe(variable, agregacion):
     
     try:
         ds = xr.open_dataset(ruta_completa)
-        # Buscar variable TOE
-        for var in ds.data_vars:
-            if 'toe' in var.lower() or 'emergence' in var.lower():
-                return ds[var]
-        # Si no encuentra, retorna la primera variable
-        return ds[list(ds.data_vars)[0]]
+        # # Buscar variable TOE
+        # for var in ds.data_vars:
+        #     if 'toe' in var.lower() or 'emergence' in var.lower():
+        #         return ds[var]
+        # Si no encuentra, retorna la primera variable        
+        if 'pr' in variable: ds_toe_var=ds[list(ds.data_vars)[-1]]
+        else: ds_toe_var=ds[list(ds.data_vars)[0]]
+        return ds_toe_var #ds[list(ds.data_vars)[0]]
     except Exception as e:
         print(f"  -> Error cargando TOE: {e}")
         return None

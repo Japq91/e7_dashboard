@@ -2,8 +2,11 @@
 # coding: utf-8
 
 """
-04_dashboard.py - Dashboard climático con análisis espacial y temporal
-Incluye: Mapas de cambios, Series temporales y Gráfico PROMEDIO
+00_dashboard.py - 
+    Dashboard climático con análisis espacial y temporal
+    Incluye: Mapas de cambios, Series temporales y Gráfico PROMEDIO
+Para ejecutar:
+    streamlit run 00_dashboard.py
 """
 
 import streamlit as st

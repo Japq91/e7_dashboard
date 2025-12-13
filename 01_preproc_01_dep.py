@@ -10,7 +10,7 @@ from shapely.geometry import mapping
 BASE_DIR = "data"
 MOD_DIR = os.path.join(BASE_DIR, "modelos_agre")  # Nueva ruta
 OUT_DIR = os.path.join(BASE_DIR, "procesados")
-GEO_FILE = os.path.join(BASE_DIR, "geo", "peru32.geojson")
+GEO_FILE = os.path.join(BASE_DIR, "geo", "peru32.geojson") # GEOJSON FILE
 os.makedirs(OUT_DIR, exist_ok=True)
 resolucion = 0.5
 

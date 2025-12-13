@@ -159,8 +159,9 @@ def generar_mapa_promedio(variable, agregacion, periodo_base, centro_year="2050"
             zmin_cambios, zmax_cambios = -1, 1
     else:
         zmin_cambios, zmax_cambios = -1, 1
+     
+    # Para el TOE - escala independiente    
     zmin_toe, zmax_toe = 2020, 2065
-    # Para el TOE - escala independiente
    
     # Crear figura con 3 columnas - SOLO 1 FILA
     fig = make_subplots(
