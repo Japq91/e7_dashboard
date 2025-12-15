@@ -119,9 +119,8 @@ def main():
         ejecutar_inicio = st.button("INICIO GENERAL -> 🏠")
         if ejecutar_inicio:
             st.session_state.vista = "inicio"
-        #st.markdown("---")
         
-        # 7. BOTÓN 2: Gráfico PROMEDIO (existente)
+        # BOTÓN PROMEDIO
         ejecutar_promedio = st.button("PROMEDIO -> 🌍", type="primary")
         if ejecutar_promedio:
             st.session_state.vista = "promedio"
@@ -156,7 +155,7 @@ def main():
             label_visibility="collapsed"
         )
 
-        # 4. Año centro con escenario
+        # 4. Año centro con escenario (USADO PARA CAMBIOS Y SERIES)
         st.markdown('<p class="medium-label">Año centro y Escenario</p>', unsafe_allow_html=True)
         year_ssp_list = obtener_lista_year_ssp()
         sel_year_ssp = st.selectbox(
@@ -168,37 +167,24 @@ def main():
         # 5. Checkbox de significancia
         activar_sig = st.checkbox("Significancia: [ p < 0.05 ]")
 
-
-
-        # 6. BOTÓN 1: Mapa de cambios (existente)
+        # BOTÓN CAMBIOS
         ejecutar_cambios = st.button("CAMBIOS", type="primary")
         if ejecutar_cambios:
             st.session_state.vista = "cambios"
         
         st.markdown("---")
-
         
         ###############################
         # SECCIÓN DE SERIES TEMPORALES
         ###############################
         st.markdown('<p class="medium-label">SERIES TEMPORALES</p>', unsafe_allow_html=True)
         
-        # Escenario para series temporales
-        escenarios = obtener_lista_escenarios()
-        sel_escenario_series = st.selectbox(
-            "Escenario para series",
-            escenarios,
-            label_visibility="collapsed"
-        )
-        
-        # 8. BOTÓN 3: Series temporales (existente)
+        # BOTÓN SERIES
         ejecutar_series = st.button("SERIES", type="primary")
         if ejecutar_series:
             st.session_state.vista = "series"
 
-        # ============================
-        # CONTROL DE mostrar_series
-        # ============================
+        # Control de mostrar_series
         st.session_state.mostrar_series = (st.session_state.get("vista", "inicio") == "series")
 
         # Si se activa series temporales, mostrar lista de departamentos
@@ -238,6 +224,7 @@ def main():
             '<p class="titulo-compacto">🌡️ Dashboard CC – SMN</p>', 
             unsafe_allow_html=True
         )
+    
     # 0. GRÁFICO DE PROMEDIO
     if vista == "promedio" and sel_var_agre:
         st.header("📊 PROMEDIO (%s MODELOS)"%len(modelos))
@@ -257,7 +244,6 @@ def main():
         
         with st.spinner("Generando gráfico de promedio..."):
             try:
-                # Usar el año centro extraído del selector existente
                 fig = generar_mapa_promedio(
                     variable=var,
                     agregacion=agregacion,
@@ -265,10 +251,8 @@ def main():
                     centro_year=centro_year
                 )
                 
-                # Mostrar el gráfico
                 st.plotly_chart(fig, use_container_width=True)
                 
-                # Información adicional
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
                     st.info(f"**Variable:** {var}")
@@ -279,7 +263,6 @@ def main():
                 with col4:
                     st.info(f"**Año centro:** {centro_year}")
                 
-                # Nota sobre los mapas
                 with st.expander("ℹ️ Información general u_u"):
                     st.markdown(f"""
                     **Mapa 1 (Izquierda):** Cambios promedio SSP245 (centrado en {centro_year})  
@@ -306,7 +289,6 @@ def main():
     elif vista == "cambios" and sel_mod and sel_var_agre and sel_year_ssp:
         st.header("📈 Cambios Proyectados >._.<")
         
-        # Separar var_agre y year_ssp con validación
         try:
             var, agregacion = separar_var_agre(sel_var_agre)
             centro, ssp = separar_centro_ssp(sel_year_ssp)
@@ -351,33 +333,34 @@ def main():
             except Exception as e:
                 st.error(f"Error generando mapa de cambios: {e}")
              
-    # 2. SERIES TEMPORALES
+    # 2. SERIES TEMPORALES (AHORA USA sel_year_ssp)
     elif vista == "series" and sel_mod and sel_var_agre:
         st.header("📈 Series Temporales  ._. ")
         
         if 'depto_seleccionado' in st.session_state:
             depto_seleccionado = st.session_state.depto_seleccionado
 
-            # Separar var_agre con validación
             try:
                 var, agregacion = separar_var_agre(sel_var_agre)
+                # EXTRAER EL ESCENARIO del selector año_centro_escenario
+                centro, ssp = separar_centro_ssp(sel_year_ssp)
             except ValueError as e:
                 st.error(f"Error en formato: {e}")
                 return
             
-            # Cargar series una vez
-            cache_key = f"{sel_mod}_{var}_{agregacion}_{sel_escenario_series}"
+            # Cargar series usando el escenario extraído de sel_year_ssp
+            cache_key = f"{sel_mod}_{var}_{agregacion}_{ssp}"
             
             if ('series_dict' not in st.session_state or 
                 st.session_state.get('cache_key', '') != cache_key):
                 
                 with st.spinner("Cargando datos de series..."):
-                    series_dict = cargar_series_modelos(sel_mod, var, agregacion, sel_escenario_series)
+                    series_dict = cargar_series_modelos(sel_mod, var, agregacion, ssp)
                     st.session_state.series_dict = series_dict
                     st.session_state.cache_key = cache_key
                     st.session_state.ultima_var = var
                     st.session_state.ultima_agregacion = agregacion
-            #####
+            
             # Generar gráfico de series
             with st.spinner("Generando series temporales..."):
                 try:
@@ -454,7 +437,7 @@ def main():
                         
                 except Exception as e:
                     st.error(f"Error generando series: {e}")
-            #####
+            
             # Crear y mostrar mapas
             with st.spinner("Generando mapas..."):
                 try:
@@ -482,12 +465,8 @@ def main():
                             'pr': 'Precipitación'
                         }
                         
-                        #st.info(f"**Variable:** {nombres_var.get(var, var)}")
                         st.info(f"**Agregación:** {agregacion}")
-                        st.info(f"**Escenario:** {sel_escenario_series}")
-                        
-                        unidades = {'pr': 'mm', 'tasmin': '°C', 'tasmax': '°C'}
-                        #st.info(f"**Unidad:** {unidades.get(var, '')}")
+                        st.info(f"**Escenario:** {ssp}")
                 
                 except Exception as e:
                     st.error(f"Error creando mapas: {e}")
@@ -523,7 +502,7 @@ def main():
         st.markdown("### 📈 Análisis Temporal -> Departamentos")
         st.markdown("""
         1. Seleccione modelos, variable (con agregación) y periodo base
-        2. Seleccione escenario para series
+        2. Seleccione año centro y escenario (se usará el escenario)
         3. Haga clic en **"SERIES"**
         4. Elija un departamento de la lista
         5. Vea las series en el gráfico
@@ -542,10 +521,6 @@ if __name__ == "__main__":
         st.session_state.ultima_var = ""
     if 'ultima_agregacion' not in st.session_state:
         st.session_state.ultima_agregacion = ""
-
-    # ============================
-    # VISTA DEFAULT
-    # ============================
 
     if 'vista' not in st.session_state:
         st.session_state.vista = "inicio"
