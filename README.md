@@ -350,3 +350,6 @@ streamlit run 00_dashboard.py
 *Documentación actualizada: Diciembre 2025*  
 *Sistema desarrollado por la Subdirección de Modelamiento Numérico (SMN) - SENAMHI*  
 *© Servicio Nacional de Meteorología e Hidrología del Perú*
+```
+https://www.canva.com/design/DAG7lltoz_g/IghIID43qbZOm42rYu0vmQ/edit?utm_content=DAG7lltoz_g&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+```
