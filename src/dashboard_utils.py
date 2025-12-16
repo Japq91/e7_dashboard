@@ -304,13 +304,10 @@ def verificar_datos_disponibles() -> Dict[str, bool]:
     }
     
     return disponibilidad
-
+######################################################################
 def obtener_opciones_var_agre_formateadas():
     """
-    Devuelve una tupla con:
-    1. Lista de nombres amigables
-    2. Lista de valores reales
-    3. Diccionario de mapeo
+    Devuelve opciones formateadas con iconos balanceados
     """
     var_agres = obtener_lista_var_agre()
     nombres_vars = []
@@ -320,33 +317,41 @@ def obtener_opciones_var_agre_formateadas():
         try:
             var, agre = var_agre.split('_')
             
-            # Nombres en español
-            var_espanol = {
-                'tasmin': 'T. Mínima',
-                'tasmax': 'T. Máxima',
-                'pr': 'Prec.',
-                'tas': 'Temperatura'
-            }.get(var, var)
+            # Configuración de variables
+            config_var = {
+                'tasmin': {'icono': '🌡️', 'nombre': 'T. Mín', 'color': 'blue'},
+                'tasmax': {'icono': '🌡️', 'nombre': 'T. Máx', 'color': 'red'},
+                'pr': {'icono': '⛈️', 'nombre': 'Prec.', 'color': 'cyan'},
+                'tas': {'icono': '🌡️', 'nombre': 'Temp.', 'color': 'purple'}
+            }
             
-            agre_espanol = {
-                'annual': 'Anual',
-                'seasonal': 'Estacional',
-                'monthly': 'Mensual',
-                'djf': 'Verano (DJF)',
-                'mam': 'Otoño (MAM)',
-                'jja': 'Invierno (JJA)',
-                'son': 'Primavera (SON)'
-            }.get(agre, agre)
+            # Configuración de agregaciones
+            config_agre = {
+                'ANUAL': {'icono': '⏱️', 'nombre': 'Anual'},
+                'seasonal': {'icono': '🌀', 'nombre': 'Estac.'},
+                'monthly': {'icono': '📆', 'nombre': 'Mensual'},
+                'DEF': {'icono': '☀️', 'nombre': 'Vera'},
+                'MAM': {'icono': '🍂', 'nombre': 'Otoñ'},
+                'JJA': {'icono': '❄️', 'nombre': 'Invi'},
+                'SON': {'icono': '🌱', 'nombre': 'Prim'}
+            }
             
-            nombre_amigable = f"{var_espanol} →› {agre_espanol}"
-            nombres_vars.append(nombre_amigable)
-            mapeo[nombre_amigable] = var_agre
+            # Obtener configuraciones
+            cfg_var = config_var.get(var, {'icono': '📊', 'nombre': var, 'color': 'gray'})
+            cfg_agre = config_agre.get(agre, {'icono': '⏱️', 'nombre': agre})
+            
+            # Construir nombre amigable
+            name_a0 = f"{cfg_var['nombre']} → {cfg_var['icono']} {cfg_agre['nombre']} {cfg_agre['icono']}"
+            #name_a0 = f"{cfg_var['icono']} {cfg_var['nombre']} → {cfg_agre['nombre']}"
+            nombres_vars.append(name_a0)
+            mapeo[name_a0] = var_agre
             
         except ValueError:
             nombres_vars.append(var_agre)
             mapeo[var_agre] = var_agre
     
     return nombres_vars, var_agres, mapeo
+
 
 def obtener_opciones_year_ssp_formateadas():
     """
