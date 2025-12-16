@@ -15,7 +15,7 @@ import sys
 
 # Preparar path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
-
+from html_loader import obtener_lista_html, cargar_html, obtener_nombres_amigables
 # Importar funciones de la carpeta src
 from data_loader_cambios import (cargar_cambios,cargar_significancia,obtener_vmin_vmax)
 from graficos_cambios import generar_mapa_multimodelo
@@ -38,7 +38,9 @@ from dashboard_utils import (
     separar_centro_ssp,
     obtener_unidad_variable,
     obtener_nombre_completo_variable,
-    obtener_nombre_agregacion
+    obtener_nombre_agregacion,
+    obtener_opciones_var_agre_formateadas,
+    obtener_opciones_year_ssp_formateadas,
 )
 # GEOJSON FILE <---------------------------------
 geo_file="data/geo/peru32.geojson"
@@ -63,9 +65,9 @@ def main():
         h2, h3 {font-size: 24px !important;color: #05457a !important;}    
         section[data-testid="stSidebar"] {
             background-color: #D2B48C !important;
-            width: 220px;          /* ancho fijo */
-            min-width: 200px;
-            max-width: 300px;
+            width: 190px;          /* ancho fijo */
+            min-width: 180px;
+            max-width: 240px;
         }
     
         .medium-label {
@@ -133,33 +135,39 @@ def main():
             label_visibility="collapsed"
         )
 
+        ###############################################
         # 2. Variable con agregación
         st.markdown('<p class="medium-label">Variable y Agregación</p>', unsafe_allow_html=True)
-        var_agres = obtener_lista_var_agre()
-        sel_var_agre = st.selectbox(
+        # Obtener opciones formateadas
+        nombres_ed, valores_reales, mapeo = obtener_opciones_var_agre_formateadas()
+        # Mostrar selectbox con nombres amigables
+        nombre_seleccionado = st.selectbox(
             "Variable y Agregación",
-            var_agres,
-            label_visibility="collapsed"
-        )
-
+            nombres_ed,
+            label_visibility="collapsed")
+        # Obtener valor real
+        sel_var_agre = mapeo[nombre_seleccionado]        
+        ###############################################
         # 3. Periodo base
         st.markdown('<p class="medium-label">Periodo base</p>', unsafe_allow_html=True)
         bases = ["1981-2010", "1991-2020"]
         sel_base = st.selectbox(
             "Periodo base",
-            bases,
+            bases, #['[ %s ]'%e.replace('-',' - ') for e in bases], #
             label_visibility="collapsed"
         )
-
-        # 4. Año centro con escenario (USADO PARA CAMBIOS Y SERIES)
-        st.markdown('<p class="medium-label">Año centro y Escenario</p>', unsafe_allow_html=True)
-        year_ssp_list = obtener_lista_year_ssp()
-        sel_year_ssp = st.selectbox(
+        ##################################################
+        # # 4. Año centro con escenario (USADO PARA CAMBIOS Y SERIES)
+        nombres_year_ssp, valores_reales = obtener_opciones_year_ssp_formateadas()
+        indice_seleccionado = st.selectbox(
             "Año centro y Escenario",
-            year_ssp_list,
+            range(len(valores_reales)),
+            format_func=lambda x: nombres_year_ssp[x],
             label_visibility="collapsed"
         )
-
+        
+        sel_year_ssp = valores_reales[indice_seleccionado]
+        #####################################################
         # 5. Checkbox de significancia
         activar_sig = st.checkbox("Significancia: [ p < 0.05 ]")
 
@@ -173,7 +181,7 @@ def main():
         ###############################
         # SECCIÓN DE SERIES TEMPORALES
         ###############################
-        st.markdown('<p class="medium-label">SERIES TEMPORALES</p>', unsafe_allow_html=True)
+        st.markdown('<p class="medium-label">Series temporales</p>', unsafe_allow_html=True)
         
         # BOTÓN SERIES
         ejecutar_series = st.button("SERIES", type="primary")
@@ -194,8 +202,7 @@ def main():
                     "Seleccione departamento:",
                     departamentos,
                     key="selector_depto"
-                )
-                
+                )                
                 st.session_state.depto_seleccionado = depto_seleccionado
                 
             except Exception as e:
@@ -203,7 +210,12 @@ def main():
         else:
             if 'depto_seleccionado' in st.session_state:
                 del st.session_state.depto_seleccionado
-    
+        st.markdown("---")
+        ##### boton html #####
+        ejecutar_infografias = st.button("Infografías", type="secondary")
+        if ejecutar_infografias:
+            st.session_state.vista = "infografias"
+         
     ###############################
     # ÁREA PRINCIPAL DEL DASHBOARD
     ###############################
@@ -215,24 +227,18 @@ def main():
         st.title("Subdirección de Modelamiento Numérico – SMN")
         st.markdown("---")
     else:
-        # Título compacto para vistas de gráficos
-        st.markdown(
-            '<p class="titulo-compacto">🌡️ Dashboard CC – SMN</p>', 
-            unsafe_allow_html=True
-        )
+        st.markdown('<p class="titulo-compacto">🌡️ Dashboard CC – SMN</p>', 
+                    unsafe_allow_html=True)
     
     # 0. GRÁFICO DE PROMEDIO
     if vista == "promedio" and sel_var_agre:
         st.header("📊 PROMEDIO (%s MODELOS)"%len(modelos))
         
         try:
-            var, agregacion = separar_var_agre(sel_var_agre)
-            
+            var, agregacion = separar_var_agre(sel_var_agre)            
             # EXTRAER EL AÑO CENTRO DEL SELECTOR EXISTENTE
-            if '_' in sel_year_ssp:
-                centro_year = sel_year_ssp.split('_')[0]
-            else:
-                centro_year = "2050"
+            if '_' in sel_year_ssp: centro_year = sel_year_ssp.split('_')[0]
+            else: centro_year = "2050"
                 
         except ValueError as e:
             st.error(f"Error en formato: {e}")
@@ -247,18 +253,12 @@ def main():
                     centro_year=centro_year
                 )
                 
-                st.plotly_chart(fig, use_container_width=True)
-                
+                st.plotly_chart(fig, use_container_width=True)                
                 col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.info(f"**Variable:** {var}")
-                with col2:
-                    st.info(f"**Agregación:** {agregacion}")
-                with col3:
-                    st.info(f"**Período base:** {sel_base}")
-                with col4:
-                    st.info(f"**Año centro:** {centro_year}")
-                
+                with col1: st.info(f"**Variable:** {var}")
+                with col2: st.info(f"**Agregación:** {agregacion}")
+                with col3: st.info(f"**Período base:** {sel_base}")
+                with col4: st.info(f"**Año centro:** {centro_year}")                
                 with st.expander("ℹ️ Información general u_u"):
                     st.markdown(f"""
                     **Mapa 1 (Izquierda):** Cambios promedio SSP245 (centrado en {centro_year})  
@@ -317,22 +317,17 @@ def main():
                 st.pyplot(fig)
                 
                 col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.info(f"**Modelos:** {len(sel_mod)}")
-                with col2:
-                    st.info(f"**Variable:** {var}")
-                with col3:
-                    st.info(f"**Agregación:** {agregacion}")
-                with col4:
-                    st.info(f"**Año centro:** {centro}, **Escenario:** {ssp}")
+                with col1: st.info(f"**Modelos:** {len(sel_mod)}")
+                with col2: st.info(f"**Variable:** {var}")
+                with col3: st.info(f"**Agregación:** {agregacion}")
+                with col4: st.info(f"**Año centro:** {centro}, **Escenario:** {ssp}")
                     
             except Exception as e:
                 st.error(f"Error generando mapa de cambios: {e}")
              
     # 2. SERIES TEMPORALES (AHORA USA sel_year_ssp)
     elif vista == "series" and sel_mod and sel_var_agre:
-        st.header("📈 Series Temporales  ._. ")
-        
+        st.header("📈 Series Temporales  ._. ")        
         if 'depto_seleccionado' in st.session_state:
             depto_seleccionado = st.session_state.depto_seleccionado
 
@@ -362,27 +357,22 @@ def main():
                 try:
                     df_series = obtener_serie_departamento(
                         st.session_state.series_dict, 
-                        depto_seleccionado
-                    )
+                        depto_seleccionado)
                     
                     if df_series is not None:
                         fig_series = crear_grafico_series(
                             df_series, 
                             depto_seleccionado, 
-                            var
-                        )
+                            var)
                         
-                        st.plotly_chart(fig_series, use_container_width=True)
-                        
+                        st.plotly_chart(fig_series, use_container_width=True)                        
                         estadisticas = calcular_estadisticas_periodos(
                             df_series, 
                             var, 
                             sel_base, 
-                            sel_year_ssp
-                        )
+                            sel_year_ssp)
                         
-                        st.markdown("### Resumen general u_u 📋")
-                        
+                        st.markdown("### Resumen general u_u 📋")                        
                         col1, col2, col3, col4 = st.columns(4)
                         
                         with col1:
@@ -469,7 +459,83 @@ def main():
 
         else:
             st.info("Seleccione un departamento de la lista en la barra lateral")
-
+    ##### html ####
+    # 4. INFOGRAFÍAS HTML
+    elif vista == "infografias":
+        st.header("📄 Infografías")
+        
+        try:
+            # Obtener lista de archivos HTML disponibles
+            archivos_html = obtener_lista_html()
+            
+            if not archivos_html:
+                st.warning("No se encontraron archivos HTML en la carpeta 'data/html/'")
+                st.info("""
+                Para agregar infografías:
+                1. Crea una carpeta llamada `data/html/`
+                2. Coloca tus archivos HTML dentro
+                3. Reinicia el dashboard
+                """)
+                return
+            
+            # Obtener nombres amigables
+            nombres_amigables = obtener_nombres_amigables()
+            
+            # Crear opciones para el selectbox
+            opciones = []
+            for archivo in archivos_html:
+                nombre_amigable = nombres_amigables.get(archivo, archivo.replace('.html', ''))
+                opciones.append((archivo, nombre_amigable))
+            
+            # Ordenar opciones alfabéticamente
+            opciones.sort(key=lambda x: x[1])
+            
+            # Selector de infografía
+            seleccion = st.selectbox(
+                "Selecciona una infografía:",
+                [op[1] for op in opciones],
+                key="selector_infografia"
+            )
+            
+            # Obtener el nombre real del archivo seleccionado
+            archivo_seleccionado = None
+            for archivo, nombre in opciones:
+                if nombre == seleccion:
+                    archivo_seleccionado = archivo
+                    break
+            
+            if archivo_seleccionado:
+                # # Mostrar información del archivo
+                # col1, col2 = st.columns([1, 1])
+                # with col1:
+                #     st.info(f"**Infografía:** {seleccion}")
+                # with col2:
+                #     st.info(f"**Archivo:** {archivo_seleccionado}")
+                
+                # Cargar y mostrar el HTML
+                with st.spinner(f"Cargando {seleccion}..."):
+                    try:
+                        html_content = cargar_html(archivo_seleccionado)
+                        
+                        # Mostrar el HTML en un iframe
+                        st.components.v1.html(
+                            html_content,
+                            height=900,  # Ajusta según necesites
+                            scrolling=True
+                        )
+                        
+                    except Exception as e:
+                        st.error(f"Error al cargar la infografía: {e}")
+                        st.info("""
+                        Posibles soluciones:
+                        1. Verifica que el archivo HTML existe en `data/html/`
+                        2. Asegúrate de que el archivo sea válido
+                        3. Verifica la codificación (debe ser UTF-8)
+                        """)
+            
+        except Exception as e:
+            st.error(f"Error en la sección de infografías: {e}")
+    # TERMINA INFOGRAFÍAS HTML
     # 3. PANTALLA DE INICIO (DEFAULT)
     else:
         st.info("👈 Seleccione una opción en la barra lateral para comenzar")
@@ -494,16 +560,24 @@ def main():
             """)
         
         st.markdown("---")
-        
-        st.markdown("### 📈 Análisis Temporal -> Departamentos")
-        st.markdown("""
-        1. Seleccione modelos, variable (con agregación) y periodo base
-        2. Seleccione año centro y escenario (se usará el escenario)
-        3. Haga clic en **"SERIES"**
-        4. Elija un departamento de la lista
-        5. Vea las series en el gráfico
-        6. Revise estadísticas comparativas
-        """)
+        col3, col4 = st.columns(2)
+        with col3:
+            st.markdown("### 📈 Análisis Temporal -> Departamentos")
+            st.markdown("""
+            1. Seleccione modelos, variable (con agregación) y periodo base
+            2. Seleccione año centro y escenario (se usará el escenario)
+            3. Haga clic en **"SERIES"**
+            4. Elija un departamento de la lista            
+            5. Revise estadísticas comparativas
+            """)
+        with col4:
+            st.markdown("### 📄 Infografías -> Documentación Visual")
+            st.markdown("""
+            1. Haga clic en **"INFOGRAFÍAS"**
+            2. Seleccione una infografía del desplegable
+            3. Explore el contenido HTML interactivo
+            4. Los archivos HTML son no-oficiales
+            """)
 
 if __name__ == "__main__":
     # Inicializar estados de sesión

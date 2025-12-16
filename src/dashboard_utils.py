@@ -304,3 +304,70 @@ def verificar_datos_disponibles() -> Dict[str, bool]:
     }
     
     return disponibilidad
+
+def obtener_opciones_var_agre_formateadas():
+    """
+    Devuelve una tupla con:
+    1. Lista de nombres amigables
+    2. Lista de valores reales
+    3. Diccionario de mapeo
+    """
+    var_agres = obtener_lista_var_agre()
+    nombres_vars = []
+    mapeo = {}
+    
+    for var_agre in var_agres:
+        try:
+            var, agre = var_agre.split('_')
+            
+            # Nombres en español
+            var_espanol = {
+                'tasmin': 'T. Mínima',
+                'tasmax': 'T. Máxima',
+                'pr': 'Prec.',
+                'tas': 'Temperatura'
+            }.get(var, var)
+            
+            agre_espanol = {
+                'annual': 'Anual',
+                'seasonal': 'Estacional',
+                'monthly': 'Mensual',
+                'djf': 'Verano (DJF)',
+                'mam': 'Otoño (MAM)',
+                'jja': 'Invierno (JJA)',
+                'son': 'Primavera (SON)'
+            }.get(agre, agre)
+            
+            nombre_amigable = f"{var_espanol} →› {agre_espanol}"
+            nombres_vars.append(nombre_amigable)
+            mapeo[nombre_amigable] = var_agre
+            
+        except ValueError:
+            nombres_vars.append(var_agre)
+            mapeo[var_agre] = var_agre
+    
+    return nombres_vars, var_agres, mapeo
+
+def obtener_opciones_year_ssp_formateadas():
+    """
+    Versión más simple - solo formatea para visualización
+    """
+    year_ssp_list = obtener_lista_year_ssp()
+    opciones_formateadas = []
+    
+    for year_ssp in year_ssp_list:
+        if '_' in year_ssp:
+            year, ssp = year_ssp.split('_')
+            # Asignar emoji según escenario
+            emoji = {
+                'ssp126': '🟢',
+                'ssp245': '🟡',
+                'ssp370': '🟠',
+                'ssp585': '🔴'
+            }.get(ssp.lower(), '📊')
+            
+            opciones_formateadas.append(f"{emoji} {ssp.upper()} → {year}")
+        else:
+            opciones_formateadas.append(year_ssp)
+    
+    return opciones_formateadas, year_ssp_list
