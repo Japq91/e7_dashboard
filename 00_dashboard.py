@@ -17,13 +17,9 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
 # Importar funciones de la carpeta src
-from data_loader_cambios import (
-    cargar_cambios,
-    cargar_significancia,
-    obtener_vmin_vmax
-)
+from data_loader_cambios import (cargar_cambios,cargar_significancia,obtener_vmin_vmax)
 from graficos_cambios import generar_mapa_multimodelo
-from series_temporales import cargar_series_modelos, obtener_serie_departamento
+from data_loader_series import cargar_series_modelos, obtener_serie_departamento
 from graficos_series import crear_grafico_series
 from estadisticas_series import calcular_estadisticas_periodos
 from mapa_interactivo import crear_mapa_departamentos

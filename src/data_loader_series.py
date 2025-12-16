@@ -1,4 +1,4 @@
-# src/series_temporales.py - Para cargar series por departamento
+# src/data_loader_series.py - Para cargar series por departamento
 
 import os
 import pandas as pd
