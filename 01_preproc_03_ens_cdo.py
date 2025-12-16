@@ -4,7 +4,6 @@
 01_preproc_03_ens_cdo.py - Cálculo de ensambles usando CDO (versión simplificada)
 Modificado para saltar archivos existentes
 """
-
 import os
 import sys
 import numpy as np
@@ -12,38 +11,30 @@ import xarray as xr
 
 # Añadir src al path
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+CENTER_YEARS = [2030, 2035, 2040, 2045, 2050]
+REF_LABEL = "1991-2020" #"1981-2010"
 
 # Importar funciones de CDO
 from aux_ens_cdo import calcular_ensemble_cdo, verificar_ensemble_existente
 # Importar funciones de cálculos (las mismas que para modelos individuales)
-from aux_cambios_significancia import (
-    seleccionar_periodo,
-    calcular_delta,
-    calcular_pvals
-)
+from aux_cambios_significancia import (seleccionar_periodo, calcular_delta, calcular_pvals)
 
 # ============================================================
 # CONFIGURACIÓN
 # ============================================================
-
 BASE_DIR = "data"
 MOD_DIR = os.path.join(BASE_DIR, "modelos_agre")
 OUT_ENS_BRUTO = os.path.join(BASE_DIR, "ensamble", "datos")
 OUT_ENS_CAMBIOS = os.path.join(BASE_DIR, "ensamble", "cambios")
 OUT_ENS_SIGNIF = os.path.join(BASE_DIR, "ensamble", "significancia")
-
 # Crear directorios
 os.makedirs(OUT_ENS_BRUTO, exist_ok=True)
 os.makedirs(OUT_ENS_CAMBIOS, exist_ok=True)
 os.makedirs(OUT_ENS_SIGNIF, exist_ok=True)
-
 # Periodos base
 REF_PERIODS = {"1981-2010": (1981, 2010), "1991-2020": (1991, 2020)}
-REF_LABEL = "1991-2020" #"1981-2010"
 REF_START, REF_END = REF_PERIODS[REF_LABEL]
-
 # Años centro
-CENTER_YEARS = [2030, 2035, 2040, 2045, 2050]
 FUT_WINDOW = 30
 
 # ============================================================
@@ -68,15 +59,12 @@ def verificar_cambios_existentes(variable, agregacion, ssp, cy):
     out_nc = os.path.join(
         OUT_ENS_CAMBIOS,
         f"ensemble_{variable}_{agregacion}_{ssp}_{REF_LABEL}_centro-{cy}.nc"
-    )
-    
+    )    
     out_npy = os.path.join(
         OUT_ENS_SIGNIF,
         f"ensemble_{variable}_{agregacion}_{ssp}_{REF_LABEL}_centro-{cy}.npy"
-    )
-    
+    )    
     return os.path.exists(out_nc) and os.path.exists(out_npy)
-
 
 def procesar_cambios_ensemble(ruta_ensemble, variable, agregacion, ssp):
     """Calcula cambios y significancia para el ensemble."""

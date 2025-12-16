@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 """
 01_preproc_02.py - Cálculo de cambios y significancia (versión actualizada)
-
 Nueva estructura:
 - Detecta automáticamente modelos, variables, agregaciones y escenarios
 - Procesa cada combinación: (modelo, variable, agregación, escenario)
@@ -11,7 +9,6 @@ Nueva estructura:
 - Calcula significancia estadística
 - Guarda salidas por cada combinación y año centro
 """
-
 import os
 import sys
 import numpy as np
@@ -20,42 +17,27 @@ import xarray as xr
 # Añadir carpeta src al path
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
+# Años centro para ventanas futuras
+CENTER_YEARS = [2030, 2035, 2040, 2045, 2050]
+REF_LABEL   = "1981-2010" #"1991-2020"  # "1981-2010"
+
 # Importamos las funciones necesarias del módulo actualizado
-from aux_cambios_significancia import (
-    seleccionar_periodo,
-    calcular_delta,
-    calcular_pvals
-)
-
-
+from aux_cambios_significancia import (seleccionar_periodo,calcular_delta,calcular_pvals)
 # ============================================================
 # CONFIGURACIÓN (ahora dinámica)
 # ============================================================
-
 BASE_DIR      = "data"
 MOD_DIR       = os.path.join(BASE_DIR, "modelos_agre")  # Nueva ruta
 OUT_CAMBIOS   = os.path.join(BASE_DIR, "mod_cambios")
 OUT_SIGNIF    = os.path.join(BASE_DIR, "mod_significancia")
-
 os.makedirs(OUT_CAMBIOS, exist_ok=True)
 os.makedirs(OUT_SIGNIF, exist_ok=True)
-
 # Periodos base fijos
-REF_PERIODS = {
-    "1981-2010": (1981, 2010),
-    "1991-2020": (1991, 2020)
-}
-
+REF_PERIODS = {"1981-2010": (1981, 2010),"1991-2020": (1991, 2020)}
 # Selección actual de referencia
-REF_LABEL   = "1981-2010" #"1991-2020"  # "1981-2010"
 REF_START, REF_END = REF_PERIODS[REF_LABEL]
-
-# Años centro para ventanas futuras
-CENTER_YEARS = [2030, 2035, 2040, 2045, 2050]
-
 # Longitud de ventana futura: 30 años
 FUT_WINDOW = 30  # años
-reso=1
 
 # ============================================================
 # FUNCIONES AUXILIARES PARA NUEVA ESTRUCTURA
