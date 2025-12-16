@@ -316,11 +316,13 @@ def main():
 
                 st.pyplot(fig)
                 
-                col1, col2, col3, col4 = st.columns(4)
+                #col1, col2, col3, col4 = st.columns(4)
+                col1, col2, col3, col4, col5 = st.columns([2, 3, 3, 3, 3])
                 with col1: st.info(f"**Modelos:** {len(sel_mod)}")
                 with col2: st.info(f"**Variable:** {var}")
                 with col3: st.info(f"**Agregación:** {agregacion}")
-                with col4: st.info(f"**Año centro:** {centro}, **Escenario:** {ssp}")
+                with col4: st.info(f"**Año centro:** {centro}")
+                with col5: st.info(f"**Escenario:** {ssp}")
                     
             except Exception as e:
                 st.error(f"Error generando mapa de cambios: {e}")

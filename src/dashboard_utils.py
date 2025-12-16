@@ -330,10 +330,10 @@ def obtener_opciones_var_agre_formateadas():
                 'ANUAL': {'icono': '⏱️', 'nombre': 'Anual'},
                 'seasonal': {'icono': '🌀', 'nombre': 'Estac.'},
                 'monthly': {'icono': '📆', 'nombre': 'Mensual'},
-                'DEF': {'icono': '☀️', 'nombre': 'Vera'},
-                'MAM': {'icono': '🍂', 'nombre': 'Otoñ'},
-                'JJA': {'icono': '❄️', 'nombre': 'Invi'},
-                'SON': {'icono': '🌱', 'nombre': 'Prim'}
+                'DEF': {'icono': '☀️', 'nombre': 'DEF'}, #Verano
+                'MAM': {'icono': '🍂', 'nombre': 'MAM'}, #Otoño
+                'JJA': {'icono': '❄️', 'nombre': 'JJA'}, #Invierno
+                'SON': {'icono': '🌱', 'nombre': 'SON'} #Primavera
             }
             
             # Obtener configuraciones
@@ -341,7 +341,7 @@ def obtener_opciones_var_agre_formateadas():
             cfg_agre = config_agre.get(agre, {'icono': '⏱️', 'nombre': agre})
             
             # Construir nombre amigable
-            name_a0 = f"{cfg_var['nombre']} → {cfg_var['icono']} {cfg_agre['nombre']} {cfg_agre['icono']}"
+            name_a0 = f"{cfg_var['nombre']} {cfg_var['icono']} {cfg_agre['nombre']} {cfg_agre['icono']}"
             #name_a0 = f"{cfg_var['icono']} {cfg_var['nombre']} → {cfg_agre['nombre']}"
             nombres_vars.append(name_a0)
             mapeo[name_a0] = var_agre
