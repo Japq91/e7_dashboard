@@ -492,7 +492,7 @@ def main():
             
             # Selector de infografía
             seleccion = st.selectbox(
-                "Selecciona una infografía:",
+                "Seleccionar:",
                 [op[1] for op in opciones],
                 key="selector_infografia"
             )
