@@ -3,6 +3,8 @@ data/**
 !data/modelos_agre/*.nc
 !data/geo/
 !data/geo/*
+!data/html/
+!data/html/*
 # =========================
 # Datos pesados / binarios
 # =========================
