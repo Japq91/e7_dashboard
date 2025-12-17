@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Rápida de Uso</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .subtitle {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .section-title {
+            color: #f5576c;
+            border-bottom: 2px solid #f5576c;
+            padding-bottom: 8px;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+        }
+        .quick-guide {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .guide-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .guide-icon {
+            font-size: 2em;
+            float: left;
+            margin-right: 15px;
+        }
+        .guide-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .control-item {
+            background: #e8f4fd;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #bbdefb;
+            font-size: 0.95em;
+            text-align: center;
+        }
+        .control-name {
+            font-weight: bold;
+            color: #1565c0;
+            margin-bottom: 5px;
+        }
+        .view-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .view-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        .view-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .view-icon {
+            font-size: 1.8em;
+            margin-right: 10px;
+            width: 40px;
+        }
+        .view-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        .view-content {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .step-box {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .step {
+            display: flex;
+            margin: 10px 0;
+            align-items: flex-start;
+        }
+        .step-num {
+            background: #4caf50;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        .badge {
+            display: inline-block;
+            background: #f5576c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍💻 Guía Rápida de Uso</h1>
+            <p class="subtitle">Dashboard Climático - SMN</p>
+        </div>
+
+        <div class="section-title">🚀 Flujo en 4 Pasos</div>
+        <div class="step-box">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                    <strong>Configurar parámetros</strong><br>
+                    En sidebar: modelos, variable, periodo base
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                    <strong>Seleccionar vista</strong><br>
+                    Click en botón: PROMEDIO, CAMBIOS o SERIES
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                    <strong>Especificar (si aplica)</strong><br>
+                    Para SERIES: elegir departamento
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div>
+                    <strong>Analizar resultados</strong><br>
+                    Interpretar mapas/gráficos/estadísticas
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">⚙️ Controles Principales</div>
+        <div class="control-grid">
+            <div class="control-item">
+                <div class="control-name">Modelos</div>
+                <p>Múltiple selección</p>
+                <small>Ej: ecmwf-51, ncep-2</small>
+            </div>
+            <div class="control-item">
+                <div class="control-name">Variable + Agregación</div>
+                <p>Variable y escala temporal</p>
+                <small>tasmin_ANUAL, pr_DEF</small>
+            </div>
+            <div class="control-item">
+                <div class="control-name">Año centro + SSP</div>
+                <p>Período futuro</p>
+                <small>2050_ssp585</small>
+            </div>
+            <div class="control-item">
+                <div class="control-name">Significancia</div>
+                <p>p < 0.05</p>
+                <small>Checkbox opcional</small>
+            </div>
+        </div>
+
+        <div class="section-title">👁️ Vistas Disponibles</div>
+        <div class="view-grid">
+            <div class="view-item">
+                <div class="view-header">
+                    <div class="view-icon">🌍</div>
+                    <div class="view-title">PROMEDIO</div>
+                </div>
+                <div class="view-content">
+                    <p><strong>Muestra:</strong> 3 mapas lado a lado</p>
+                    <ul>
+                        <li>SSP245 (moderado)</li>
+                        <li>SSP585 (severo)</li>
+                        <li>TOE (emergencia)</li>
+                    </ul>
+                    <p><small>Consenso multimodelo</small></p>
+                </div>
+            </div>
+            <div class="view-item">
+                <div class="view-header">
+                    <div class="view-icon">🗺️</div>
+                    <div class="view-title">CAMBIOS</div>
+                </div>
+                <div class="view-content">
+                    <p><strong>Muestra:</strong> Mapas paralelos por modelo</p>
+                    <ul>
+                        <li>Comparación entre modelos</li>
+                        <li>Significancia (puntos negros)</li>
+                        <li>Escala de color compartida</li>
+                    </ul>
+                    <p><small>Análisis individual</small></p>
+                </div>
+            </div>
+            <div class="view-item">
+                <div class="view-header">
+                    <div class="view-icon">📈</div>
+                    <div class="view-title">SERIES</div>
+                </div>
+                <div class="view-content">
+                    <p><strong>Muestra:</strong> Análisis por departamento</p>
+                    <ul>
+                        <li>Gráfico temporal</li>
+                        <li>Estadísticas comparativas</li>
+                        <li>Mapas de ubicación</li>
+                    </ul>
+                    <p><small>Escala subnacional</small></p>
+                </div>
+            </div>
+            <div class="view-item">
+                <div class="view-header">
+                    <div class="view-icon">📄</div>
+                    <div class="view-title">INFOGRAFÍAS</div>
+                </div>
+                <div class="view-content">
+                    <p><strong>Muestra:</strong> Documentación HTML</p>
+                    <ul>
+                        <li>Guía técnica</li>
+                        <li>Guía de uso</li>
+                        <li>Esta infografía</li>
+                    </ul>
+                    <p><small>Archivos en data/html/</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">💡 Consejos Rápidos</div>
+        <div class="quick-guide">
+            <div class="guide-item">
+                <div class="guide-icon">🎯</div>
+                <div>
+                    <div class="guide-title">Para análisis inicial</div>
+                    <p>Usar <strong>PROMEDIO</strong> para ver consenso científico entre todos los modelos</p>
+                </div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-icon">🔍</div>
+                <div>
+                    <div class="guide-title">Para rigor estadístico</div>
+                    <p>Activar <strong>Significancia</strong> en vista CAMBIOS para filtrar resultados robustos</p>
+                </div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-icon">📊</div>
+                <div>
+                    <div class="guide-title">Para informes regionales</div>
+                    <p>Usar <strong>SERIES</strong> con departamento específico + métricas comparativas</p>
+                </div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-icon">🔄</div>
+                <div>
+                    <div class="guide-title">Para comparar escenarios</div>
+                    <p>Mismo año centro con <strong>SSP245 vs SSP585</strong> para ver diferencia de trayectorias</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>📝 Interpretación de colores:</strong><br>
+            • <span style="color: #000;">⚫ Puntos negros</span>: Cambios significativos (p < 0.05)
+        </div>
+
+        <div class="footer">
+            <p>Dashboard Climático - SMN/SENAMHI</p>
+            <p>Guía de uso v1.0 - Diciembre 2025</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Técnica Compacta</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 15px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .subtitle {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .section-title {
+            color: #2575fc;
+            border-bottom: 2px solid #2575fc;
+            padding-bottom: 8px;
+            margin: 25px 0 15px 0;
+            font-size: 1.6em;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.1em;
+        }
+        .card-title {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.3em;
+        }
+        .tree {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.2em;
+            line-height: 1.4;
+            margin: 10px 0;
+        }
+        .code-inline {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+        .highlight {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #2196f3;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .module-item {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.0em;
+            border: 1px solid #bbdefb;
+        }
+        .module-name {
+            font-weight: bold;
+            color: #1565c0;
+            margin-bottom: 5px;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .button-item {
+            background: #f1f8e9;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #c5e1a5;
+            font-size: 1.1em;
+        }
+        .button-icon {
+            font-size: 1.8em;
+            float: left;
+            margin-right: 10px;
+        }
+        .button-title {
+            font-weight: bold;
+            color: #558b2f;
+            margin-bottom: 5px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 1.0em;
+        }
+        .badge {
+            display: inline-block;
+            background: #6a11cb;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 1.0em;
+            margin-right: 5px;
+        }
+        .format-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .format-example {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.2em;
+            overflow-x: auto;
+        }
+        .format-desc {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        .nc-specs {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 1.0em;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Guía Técnica Rápida</h1>
+            <p class="subtitle">Dashboard Climático - SMN</p>
+        </div>
+
+        <div class="section-title">📁 Estructura de Directorios</div>
+        <div class="tree">
+data/<br>
+├── geo/peru32.geojson<br>
+├── modelos_agre/    # NetCDF originales<br>
+├── procesados/      # CSV departamentales<br>
+├── mod_cambios/     # Δ calculados<br>
+├── mod_significancia/<br>
+├── ensamble/        # Promedios<br>
+└── html/            # Esta infografía<br>
+<br>
+src/<br>
+├── algoritmos/      # Cálculos científicos<br>
+├── carga_datos/     # Loaders<br>
+├── visualizacion/   # Gráficos<br>
+└── utils/           # Utilidades
+        </div>
+
+        <div class="section-title">📄 Formato de Archivos de Entrada</div>
+        <div class="format-grid">
+            <div class="format-example">
+<strong>Patrón de nombres:</strong><br>
+{variable}_{agregacion}_{modelo}_{ssp}.nc<br><br>
+<strong>Ejemplos:</strong><br>
+pr_MAM_france‑8_ssp585.nc<br>
+tasmin_MAM_jma‑3_ssp245.nc<br>
+tasmax_MAM_ncep‑2_ssp245.nc<br>
+pr_DEF_ecmwf‑51_ssp585.nc
+            </div>
+            <div class="format-desc">
+                <strong>Componentes del nombre:</strong><br>
+                1. <span class="code-inline">variable</span>: pr, tasmin, tasmax<br>
+                2. <span class="code-inline">agregacion</span>: MAM, DEF, ANUAL, ...<br>
+                3. <span class="code-inline">modelo</span>: france‑8, jma‑3, ncep‑2, ...<br>
+                4. <span class="code-inline">ssp</span>: ssp245, ssp585<br><br>
+                <strong>Ubicación:</strong><br>
+                Todos los archivos .nc deben estar en<br>
+                <span class="code-inline">data/modelos_agre/</span>
+            </div>
+        </div>
+
+        <div class="nc-specs">
+            <strong>📊 Especificaciones NetCDF:</strong><br>
+            • <strong>Período temporal:</strong> 1981‑01‑01 a 2065‑12‑31 (85 años)<br>
+            • <strong>Resolución espacial:</strong> 1° (15×21 puntos, lon: ‑82 a ‑68, lat: ‑19 a 1)<br>
+            • <strong>Variables:</strong> tasmin, tasmax (°C) o pr (mm/día)<br>
+            • <strong>Formato:</strong> NetCDF4, calendario gregoriano proleptic<br>
+            • <strong>Dimensión tiempo:</strong> 85 pasos, frecuencia anual
+        </div>
+
+        <div class="section-title">⚡ Instalación Express</div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">1. Requisitos</div>
+                <p>• Python 3.8+</p>
+                <p>• <span class="code-inline">conda install -c conda-forge cdo</span></p>
+                <p>• 8GB RAM mínimo</p>
+            </div>
+            <div class="card">
+                <div class="card-title">2. Ambiente</div>
+                <p><span class="code-inline">conda env create -f environment.yml</span></p>
+                <p><span class="code-inline">conda activate e7-cc</span></p>
+            </div>
+            <div class="card">
+                <div class="card-title">3. Datos</div>
+                <p>Colocar NetCDF en:</p>
+                <p><span class="code-inline">data/modelos_agre/</span></p>
+                <p><small>Siguiendo el formato de nombres</small></p>
+            </div>
+            <div class="card">
+                <div class="card-title">4. Ejecutar</div>
+                <p><span class="code-inline">streamlit run 00_dashboard.py</span></p>
+                <p>Acceder: <span class="code-inline">http://localhost:8501</span></p>
+            </div>
+        </div>
+
+        <div class="section-title">🔄 Flujo de Procesamiento</div>
+        <div class="grid-2">
+            <div class="card">
+                <span class="badge">01</span><strong> Extracción series</strong>
+                <p>Script: <span class="code-inline">01_preproc_01_dep.py</span></p>
+                <p>NetCDF → CSV por depto</p>
+            </div>
+            <div class="card">
+                <span class="badge">02</span><strong> Cambios + significancia</strong>
+                <p>Script: <span class="code-inline">01_preproc_02_cambio.py</span></p>
+                <p>Test t‑Student (p<0.05)</p>
+            </div>
+            <div class="card">
+                <span class="badge">03</span><strong> Ensemble multimodelo</strong>
+                <p>Script: <span class="code-inline">01_preproc_03_ens_cdo.py</span></p>
+                <p>Requiere CDO instalado</p>
+            </div>
+            <div class="card">
+                <span class="badge">04</span><strong> Time of Emergence</strong>
+                <p>Script: <span class="code-inline">01_preproc_04_toe.py</span></p>
+                <p>5‑part algorithm</p>
+            </div>
+        </div>
+
+        <div class="section-title">🧩 Módulos src/</div>
+        <div class="module-grid">
+            <div class="module-item">
+                <div class="module-name">aux_cambios_significancia.py</div>
+                <p>Cálculo Δ y test t</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">aux_calcular_toe.py</div>
+                <p>TOE algorithm</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">data_loader_cambios.py</div>
+                <p>Carga cambios por modelo</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">data_loader_promedio.py</div>
+                <p>Carga ensemble</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">graficos_cambios.py</div>
+                <p>Mapas paralelos</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">graficos_promedio.py</div>
+                <p>3‑map layout</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">graficos_series.py</div>
+                <p>Series temporales</p>
+            </div>
+            <div class="module-item">
+                <div class="module-name">dashboard_utils.py</div>
+                <p>Funciones auxiliares</p>
+            </div>
+        </div>
+
+        <div class="section-title">🔘 Lógica de Botones</div>
+        <div class="button-grid">
+            <div class="button-item">
+                <div class="button-icon">🏠</div>
+                <div class="button-title">INICIO GENERAL</div>
+                <p>Restablece vista a inicio</p>
+                <p><small>Estado: vista = "inicio"</small></p>
+            </div>
+            <div class="button-item">
+                <div class="button-icon">🌍</div>
+                <div class="button-title">PROMEDIO</div>
+                <p>Muestra ensemble multimodelo</p>
+                <p><small>Llama a generar_mapa_promedio()</small></p>
+            </div>
+            <div class="button-item">
+                <div class="button-icon">🗺️</div>
+                <div class="button-title">CAMBIOS</div>
+                <p>Mapas por modelo individual</p>
+                <p><small>Usa matplotlib + geopandas</small></p>
+            </div>
+            <div class="button-item">
+                <div class="button-icon">📈</div>
+                <div class="button-title">SERIES</div>
+                <p>Análisis temporal por depto</p>
+                <p><small>Plotly + estadísticas</small></p>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <strong>💡 Para agregar nuevos modelos:</strong><br>
+            1. Crear archivo NetCDF con formato: <span class="code-inline">{var}_{agg}_{modelo}_{ssp}.nc</span><br>
+            2. Colocar en <span class="code-inline">data/modelos_agre/</span><br>
+            3. Ejecutar scripts de preprocesamiento (01_*)<br>
+            4. El dashboard detectará automáticamente los nuevos modelos
+        </div>
+
+        <div class="footer">
+            <p>Dashboard Climático - SMN/SENAMHI</p>
+            <p>Documentación técnica v1.0 - Diciembre 2025</p>
+        </div>
+    </div>
+</body>
+</html>
