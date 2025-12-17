@@ -183,20 +183,25 @@
 
         <div class="section-title">📁 Estructura de Directorios</div>
         <div class="tree">
+
 data/<br>
 ├── geo/peru32.geojson<br>
-├── modelos_agre/    # NetCDF originales<br>
-├── procesados/      # CSV departamentales<br>
-├── mod_cambios/     # Δ calculados<br>
-├── mod_significancia/<br>
-├── ensamble/        # Promedios<br>
-└── html/            # Esta infografía<br>
+├── modelos_agre/      # Archivos de Entrada NetCDF<br>
+├── procesados/        # CSV departamentales<br>
+├── mod_cambios/       # Δ calculados<br>
+├── mod_significancia/ # p‑valores por modelo<br>
+├── ensamble/          # Promedios de modelos disponibles<br>
+│ . ├── cambios/       # Δ del ensemble (SSP245/585)<br>
+│ . ├── datos/         # Ensembles brutos por variable<br>
+│ . └── significancia/ # p‑valores del ensemble<br>
+└── html/              # Esta infografía<br>
 <br>
 src/<br>
-├── algoritmos/      # Cálculos científicos<br>
-├── carga_datos/     # Loaders<br>
-├── visualizacion/   # Gráficos<br>
-└── utils/           # Utilidades
+├── algoritmos/        # Cálculos científicos<br>
+├── carga_datos/       # Loaders<br>
+├── visualizacion/     # Gráficos<br>
+└── utils/             # Utilidades
+
         </div>
 
         <div class="section-title">📄 Formato de Archivos de Entrada</div>
@@ -217,16 +222,16 @@ pr_DEF_ecmwf‑51_ssp585.nc
                 3. <span class="code-inline">modelo</span>: france‑8, jma‑3, ncep‑2, ...<br>
                 4. <span class="code-inline">ssp</span>: ssp245, ssp585<br><br>
                 <strong>Ubicación:</strong><br>
-                Todos los archivos .nc deben estar en<br>
+                Los archivos input .nc deben estar en<br>
                 <span class="code-inline">data/modelos_agre/</span>
             </div>
         </div>
 
         <div class="nc-specs">
             <strong>📊 Especificaciones NetCDF:</strong><br>
-            • <strong>Período temporal:</strong> 1981‑01‑01 a 2065‑12‑31 (85 años)<br>
-            • <strong>Resolución espacial:</strong> 1° (15×21 puntos, lon: ‑82 a ‑68, lat: ‑19 a 1)<br>
-            • <strong>Variables:</strong> tasmin, tasmax (°C) o pr (mm/día)<br>
+            • <strong>Período temporal:</strong> 1981 a 2065 (85 años)<br>
+            • <strong>Resolución espacial:</strong> 1° (nombres dimensiones [lon, lat])<br>
+            • <strong>Variables:</strong> tasmin, tasmax (°C) o pr (mm)<br>
             • <strong>Formato:</strong> NetCDF4, calendario gregoriano proleptic<br>
             • <strong>Dimensión tiempo:</strong> 85 pasos, frecuencia anual
         </div>
